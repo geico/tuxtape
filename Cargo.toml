@@ -1,0 +1,72 @@
+[package]
+name = "tuxtape-poc"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "tuxtape-cve-parser"
+path = "src/parser/parser.rs"
+
+[[bin]]
+name = "tuxtape-server"
+path = "src/server/server.rs"
+
+[[bin]]
+name = "tuxtape-kernel-builder"
+path = "src/kernel_builder/main.rs"
+
+[[bin]]
+name = "tuxtape-dashboard"
+path = "src/dashboard/main.rs"
+
+[dependencies]
+anyhow = "1.0"
+chrono = "0.4"
+clap = { version = "4.5", features = [
+    "derive",
+    "cargo",
+    "wrap_help",
+    "unicode",
+    "string",
+    "unstable-styles"
+] }
+const_format = "0.2"
+git2 = "0.19"
+prost = "0.13"
+rusqlite = { version = "0.32", features = ["bundled", "array"] }
+serde = { version = "1.0", features = ["derive", "rc"] }
+serde_derive = "1.0"
+serde_json = "1.0"
+tokio = { version = "1.40", features = ["full"] }
+tonic = {version = "0.12", features = ["tls", "gzip"] }
+tonic-reflection = "0.12"
+tonic-health = "0.12"
+ureq = { version = "2.10", features = ["json"] }
+
+# Dependencies specific to tuxtape-dashboard
+better-panic = "0.3"
+color-eyre = "0.6"
+config = "0.14"
+crossterm = { version = "0.28", features = ["serde", "event-stream"] }
+derive_deref = "1.1"
+directories = "5.0"
+edit = "0.1"
+futures = "0.3"
+human-panic = "2.0"
+lazy_static = "1.5"
+libc = "0.2"
+pretty_assertions = "1.4"
+ratatui = { version = "0.29", features = ["serde", "macros", "unstable-rendered-line-info"] }
+signal-hook = "0.3"
+strip-ansi-escapes = "0.2"
+strum = { version = "0.26", features = ["derive"] }
+toml = "0.8"
+tokio-util = "0.7"
+tracing = "0.1"
+tracing-error = "0.2"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
+
+[build-dependencies]
+tonic-build = "0.12"
+# dependencies specific to tuxtape-dashboard
+vergen-gix = { version = "1.0", features = ["build", "cargo"] }
