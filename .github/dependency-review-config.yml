@@ -1,0 +1,10 @@
+fail_on_severity: 'critical'
+allow_licenses:
+  - Apache-2.0
+  - 0BSD
+  - BSD-3-Clause 
+  - ISC
+  - MIT
+  - MPL-2.0
+  - Unicode-3.0
+  - Zlib

@@ -1,0 +1,154 @@
+syntax = "proto3";
+package tuxtape_server;
+
+service Database {
+  // Fetch CVEs sorted by base score.
+  rpc FetchCves(FetchCvesRequest) returns (FetchCvesReponse);
+  // Fetch all kernel configs metadata in the database.
+  rpc FetchKernelConfigsMetadata(FetchKernelConfigsMetadataRequest) returns (FetchKernelConfigsMetadataResponse);
+  // Fetch a kernel config from the database.
+  rpc FetchKernelConfig(FetchKernelConfigRequest) returns (FetchKernelConfigResponse);
+  // Put a kernel config into the database.
+  rpc PutKernelConfig(PutKernelConfigRequest) returns (PutKernelConfigResponse);
+  // Register a kernel builder. Called by tuxtape-kernel-builder.
+  rpc RegisterKernelBuilder(RegisterKernelBuilderRequest) returns (RegisterKernelBuilderResponse);
+}
+
+service Builder {
+  // Builds a kernel then calls PutKernelBuild on the database server.
+  rpc BuildKernel(BuildKernelRequest) returns (BuildKernelResponse);
+}
+
+message FetchCvesRequest {
+  // The metadata for the KernelConfigs which you are requesting CVEs for.
+  // If empty, returns CVEs for all KernelConfig in the database.
+  repeated KernelConfigMetadata kernel_configs_metadata = 1;
+  // If true, excludes CVEs which never received a patch in a later KernelVersion.
+  bool exclude_unpatched = 2;
+  // If true, excludes CVEs which already have a deployable patch.
+  bool exclude_deployable_patched = 3;
+}
+
+message FetchCvesReponse {
+  repeated Cve cves = 1;
+}
+
+message FetchKernelConfigsMetadataRequest {
+}
+
+message FetchKernelConfigsMetadataResponse {
+  repeated KernelConfigMetadata metadata = 1;
+}
+
+message FetchKernelConfigRequest {
+  KernelConfigMetadata metadata = 1;
+}
+
+message FetchKernelConfigResponse {
+  KernelConfig kernel_config = 1;
+}
+
+message KernelConfig {
+  // Metadata about the kernel config
+  KernelConfigMetadata metadata = 1;
+  // The config file itself.
+  string config_file = 2;
+}
+
+message KernelConfigMetadata {
+  // The name of the kernel config file.
+  string config_name = 1;
+  // The kernel version that this config is to be built on.
+  KernelVersion kernel_version = 2;
+}
+
+message Cve {
+  // The ID of the CVE.
+  string id = 1;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional float severity = 2;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string attack_vector = 3;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string attack_complexity = 4;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string privileges_required = 5;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string user_interaction = 6;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string scope = 7;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string confidentiality_impact = 8;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string integrity_impact = 9;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string availability_impact = 10;
+  // Will be null if the CVE has not yet been evaluated by NIST.
+  optional string description = 11;
+  // Instances of this CVE across different KernelVersions.
+  repeated CveInstance instances = 12;
+}
+
+message CveInstance {
+  // The unique title for this specific instance of the CVE.
+  // Formatted {cve_id}-{introduced}-{fixed_commit-prefix}.
+  string title = 1;
+  // The KernelVersion in which the CVE was introduced.
+  KernelVersion introduced = 2;
+  // The KernelVersion that patched the CVE.
+  // Will be null if the CVE was not patched in a later KernelVersion.
+  optional KernelVersion fixed = 3;
+  // The prefix of the commit hash (first 12 characters) that 
+  // patched the CVE in the fixed KernelVersion.
+  // Will be null if the CVE was not patched in a later KernelVersion.
+  optional string fixed_commit_prefix = 4;
+  // All files affected in this instance of the CVE.
+  // Will be empty if the CVE was not patched in a later KernelVersion.
+  repeated string affected_files = 5;
+  // Metadata on all kernel configs affected by this CveInstance.
+  // Will be empty if the CVE was not patched in a later KernelVerision or if no
+  // kernel build on the fleet contains the affected_files.
+  repeated KernelConfigMetadata affected_configs = 6;
+  // The raw git diff of the commit that patched the CVE in the fixed KernelVersion.
+  // Will be null if the CVE was not patched in a later KernelVersion.
+  optional string raw_patch = 7;
+  // The kpatch-compatible patch approved for deployment to the fleet.
+  // Will be null if no deployable patch was approved.
+  optional string deployable_patch = 8;
+}
+
+message KernelVersion {
+  uint32 major = 1;
+  uint32 minor = 2;
+  optional uint32 patch = 3;
+}
+
+message PutKernelConfigRequest {
+  // The kernel_config you wish to add to the database.
+  KernelConfig kernel_config = 1;
+}
+
+message PutKernelConfigResponse {
+}
+
+message PutKernelBuildResponse {
+}
+
+message BuildKernelRequest {
+  // The KernelConfig to be built.
+  KernelConfig kernel_config = 1;
+}
+
+message BuildKernelResponse {
+    // A list of file paths (from the root of the kernel source tree)
+    // that were included in this build.
+    repeated string included_files = 1;
+}
+
+message RegisterKernelBuilderRequest {
+  // The address to the kernel builder.
+  string builder_address = 1;
+}
+
+message RegisterKernelBuilderResponse {
+}
