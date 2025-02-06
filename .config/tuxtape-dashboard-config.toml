@@ -1,0 +1,14 @@
+[keybindings.Normal]
+q = "Quit"
+shift-h = "TabLeft"
+shift-l = "TabRight"
+h = "PaneLeft"
+l = "PaneRight"
+j = "ScrollDown"
+k = "ScrollUp"
+"<Enter>" = "Select"
+
+[database]
+server_url = "127.0.0.1:50051"
+use_tls = false
+# tls_cert_path = "put path here if use_tls = true"
