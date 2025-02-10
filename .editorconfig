@@ -1,0 +1,25 @@
+# https://editorconfig.org/
+# with some guidance from:
+#   - https://github.com/rust-lang/rust/blob/master/.editorconfig
+#   - https://editorconfig.org/#example-file
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+trim_trailing_whitespace = true
+insert_final_newline = true
+charset = utf-8
+end_of_line = lf
+
+[*.rs]
+max_line_length = 100
+
+[*.md]
+# double whitespace at end of line
+# denotes a line break in Markdown
+trim_trailing_whitespace = false
+
+[*.{yml,yaml}]
+indent_size = 2
