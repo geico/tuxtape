@@ -1,0 +1,23 @@
+syntax = "proto3";
+package tuxtape.kernel_builder.v1;
+
+import "tuxtape/common/v1/kernel.proto";
+
+// The main service of tuxtape-kernel-builder. This service should only be
+// called by tuxtape-server.
+service KernelBuilderService {
+  // Request a kernel build.
+  rpc BuildKernel(BuildKernelRequest) returns (BuildKernelResponse);
+}
+
+// The request sent from tuxtape-server to build a kernel.
+message BuildKernelRequest {
+  // The `KernelSource` of the kernel to be built.
+  tuxtape.common.v1.KernelSource kernel_source = 1;
+}
+
+// The response to a `BuildKernelRequest`.
+message BuildKernelResponse {
+  // The URL to the build artifacts of the kernel.
+  string build_artifacts_url = 1;
+}

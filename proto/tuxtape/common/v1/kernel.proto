@@ -1,0 +1,104 @@
+syntax = "proto3";
+package tuxtape.common.v1;
+
+// Describes the source that a kernel is built from.
+message KernelSource {
+  // The release of this kernel.
+  KernelRelease kernel_release = 1;
+  // A URL to a .tar.gz that contains the metadata needed to build this kernel.
+  //
+  // The .tar.gz must contain the following directories/files in the following
+  // format:
+  //  `/patches/{n}-{patch-description}.diff`
+  //    - `git diff` files that describe the changes made to the mainline kernel
+  //       described in `mainline-kernel-version.txt`.
+  //        - If you are using a downstream kernel (Ubuntu, RHEL, etc.), this
+  //          must include the patches that were applied to that downstream
+  //          kernel from mainline.
+  //    - Files must begin with a number {n} (omitting braces, zero-indexed) of
+  //      the order the patch should be applied in.
+  //    - Files must end in `.diff`.
+  //    - e.g. The first patch to be applied could be named
+  //      `0-first-patch.diff`.
+  //  `/.config`
+  //    - Linux kernel configuration file.
+  //    - Must be named `.config`.
+  //  `/mainline-kernel-version.txt`
+  //    - Must contain only one line of text with the mainline kernel version
+  //      that this kernel is based on.
+  //    - Contents of this file must be in the format
+  //      `{major}-{minor}-{patch}{extra_version}` (omitting single quotes).
+  //    - If the kernel version does not contain an extra_version (usually to
+  //      denote a release candidate), omit that value.
+  //    - e.g. A kernel matching the git tag `v6.8` is written `6.8` (omitting
+  //      single quotes).
+  //    - e.g. A kernel matching the git tag `v6.8.9` is written `6.8.9`.
+  //    - e.g. A kernel matching the git tag `v6.8-rc1` is written `6.8-rc1`.
+  string kernel_source_url = 2;
+}
+
+// A full representation of a kernel release.
+// An unmodified mainline kernel does not contain a `local_version`, but a custom
+// configuration on a mainline kernel or a downstream kernel distribution
+// should.
+//
+// The `KernelRelease` is used to identify unique instances of the kernel
+// that run on the managed fleet, so it is important that the `local_version` be
+// set uniquely for each kernel instance on the managed fleet.
+//
+// `local_version` can be determined in two ways: via `uname -r` (if the kernel
+// is installed and running), or via the `Makefile` and `.config` (if the kernel
+// is not yet built).
+// The output of `uname -r` is in following format:
+// `{VERSION}-{PATCHLEVEL}-{SUBVERSION}{EXTRAVERSION}[-{CONFIG_LOCALVERSION}]`
+// where the portion in square braces is omitted if `CONFIG_LOCALVERSION` is
+// not set (the square braces themselves are also omitted).
+//
+// `VERSION`, `PATCHLEVEL`, `SUBVERSION` and `EXTRAVERSION` are defined in the
+// kernel's `Makefile` and `CONFIG_LOCALVERSION` in `.config`.
+// e.g. `6.8.0-52-generic`, `6.8.0-generic`, `6.8.0` where `VERSION` == `6`,
+// `PATCHLEVEL` == `8`, `SUBVERSION` == `0`, `EXTRAVERSION` == `-52`, and
+// `CONFIG_LOCAL_VERSION` == `generic` in the first example.
+message KernelRelease {
+  // The version of the mainline kernel that the described kernel is based on.
+  //
+  // IMPORTANT: This should be the base that all patches described in this
+  // kernel's `KernelSource` are applied on top of.
+  // Using the example of Ubuntu's `linux 6.8.0-53.55` source package
+  // (https://web.archive.org/web/20250221155101/https://launchpad.net/ubuntu/+source/linux/6.8.0-53.55)
+  // Even though the most current mainline 6.8 release at the time of this
+  // Ubuntu kernel was 6.8.12 (this is reflected in the
+  // `/proc/version_signature`), the patch set provided by Canonical is based on
+  // 6.8.0, so that is what `mainline_kernel_version` should be set to.
+  MainlineKernelVersion mainline_kernel_version = 1;
+  // The `CONFIG_LOCALVERSION` of the described kernel (see this message's
+  // documentation for more details).
+  // Will be null if a local_version is not set.
+  //
+  // IMPORTANT: Even though this can be null in theory, it shouldn't ever be.
+  // See this message's documentation to understand why.
+  optional string local_version = 2;
+}
+
+// The version of a mainline kernel.
+// In the case of downstream kernels, this is the mainline kernel which the
+// downstream patches are based on.
+message MainlineKernelVersion {
+  // The major version of the kernel.
+  // Matches the Makefile's `VERSION` variable.
+  uint32 major = 1;
+  // The minor version of the kernel.
+  // Matches the Makefile's `PATCHLEVEL` variable.
+  uint32 minor = 2;
+  // The patch version of the kernel.
+  // Matches the Makefile's `SUBLEVEL` variable.
+  // Will be null if there was no patch commit on the kernel. Do not set
+  // this value to `0` if there is no patch commit.
+  optional uint32 patch = 3;
+  // Should represent the release candidate version if one exists.
+  // Matches the Makefile's `EXTRAVERSION` variable.
+  // e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
+  // (make sure to include the `-`).
+  // Will be null if the kernel does not contain an EXTRAVERSION.
+  optional string extra_version = 4;
+}
