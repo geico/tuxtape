@@ -234,7 +234,7 @@ fn init_linux_repo() -> Result<()> {
     if !Path::new(format!("{}/.git", LINUX_REPO_PATH).as_str()).exists() {
         Command::new("git")
             .current_dir(LINUX_REPO_PATH)
-            .args(["clone", LINUX_REPO_URL])
+            .args(["clone", LINUX_REPO_URL, LINUX_REPO_PATH])
             .spawn()?
             .wait()?;
     }
