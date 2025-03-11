@@ -1,0 +1,35 @@
+syntax = "proto3";
+package tuxtape.server.registrar.v1;
+
+// A service for registering connections to auxillary servers like
+// tuxtape-kernel-builder and tuxtape-patch-builder.
+//
+// This is needed as gRPC currently only allows for service methods to be called
+// from a client to a server, thus a client connection to tuxtape-kernel-buider
+// or tuxtape-patch-builder is not sufficient for dispatching build jobs.
+service RegistrarService {
+  // Called by tuxtape-kernel-builder upon startup to register itself to
+  // tuxtape-server.
+  rpc RegisterKernelBuilder(RegisterKernelBuilderRequest) returns (RegisterKernelBuilderResponse);
+  // Called by tuxtape-patch-builder upon startup to register itself to
+  // tuxtape-server.
+  rpc RegisterPatchBuilder(RegisterPatchBuilderRequest) returns (RegisterPatchBuilderResponse);
+}
+
+// The request to register a tuxtape-kernel-builder.
+message RegisterKernelBuilderRequest {
+  // The URL to the tuxtape-kernel-builder.
+  string url = 1;
+}
+
+// The response to registering a tuxtape-kernel-builder.
+message RegisterKernelBuilderResponse {}
+
+// The request to register a tuxtape-patch-builder.
+message RegisterPatchBuilderRequest {
+  // The URL to the tuxtape-patch-builder.
+  string url = 1;
+}
+
+// The response to registering a tuxtape-patch-builder.
+message RegisterPatchBuilderResponse {}
