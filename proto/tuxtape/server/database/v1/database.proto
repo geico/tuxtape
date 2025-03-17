@@ -1,0 +1,77 @@
+syntax = "proto3";
+package tuxtape.server.database.v1;
+
+import "tuxtape/common/v1/kernel.proto";
+import "tuxtape/common/v1/vulnerability.proto";
+
+// The main service for tuxtape-server. This is used to get, create, and update
+// resources within the TuxTape database.
+service DatabaseService {
+  // Get `Vulnerability`s from the database.
+  rpc GetVulnerabilities(GetVulnerabilitiesRequest) returns (GetVulnerabilitiesResponse);
+  // Get a `KernelSource` from the database.
+  rpc GetKernelSource(GetKernelSourceRequest) returns (GetKernelSourceResponse);
+  // Put a kernel into the database.
+  // Once received, tuxtape-server will dispatch a `BuildKernelRequest` to
+  // the next available tuxtape-kernel-builder.
+  rpc CreateKernel(CreateKernelRequest) returns (CreateKernelResponse);
+}
+
+// Get `Vulnerability`s from the database.
+message GetVulnerabilitiesRequest {
+  // Exclude `Vulnerability`s in result that match these conditions.
+  // Leave this empty if you do not wish to exclude anything.
+  repeated Exclude excludes = 1;
+  // How to look up `Vulnerability`s.
+  oneof get_by {
+    All all = 2;
+    ByKernelRelease kernel_release = 3;
+    // We may later wish to add an option like `ByFleetGroup`.
+  }
+
+  // Specifies what should be excluded from the results.
+  enum Exclude {
+    // Conventional default for enums. Do not use this.
+    EXCLUDE_UNSPECIFIED = 0;
+    // Exclude `Vulnerability`s that have not received a raw patch.
+    EXCLUDE_UNPATCHED = 1;
+    // Exclude `Vulnerability`s that already have a deployable patch.
+    EXCLUDE_DEPLOYABLE_PATCHED = 2;
+  }
+
+  // Get all `Vulnerability`s that aren't filtered by previous excludes.
+  message All {}
+
+  // Get `Vulnerability`s that affect the specified `KernelRelease`s.
+  message ByKernelRelease {
+    repeated tuxtape.common.v1.KernelRelease kernel_release = 1;
+  }
+}
+
+// The response to a `GetVulnerabilitiesRequest`.
+message GetVulnerabilitiesResponse {
+  // The `Vulnerability`s that matched the parameters in the request.
+  // Will be empty if no matches are found.
+  repeated tuxtape.common.v1.Vulnerability vulnerabilities = 1;
+}
+
+// Request the `KernelSource` for a `KernelRelease`.
+message GetKernelSourceRequest {
+  // The `KernelRelease` you are requesting a `KernelSource` for.
+  tuxtape.common.v1.KernelRelease kernel_release = 1;
+}
+
+// The response to a `GetKernelSourceRequest`.
+message GetKernelSourceResponse {
+  // Will be null if no `KernelSource` matched the request.
+  optional tuxtape.common.v1.KernelSource kernel_source = 1;
+}
+
+// Request to put a new kernel into the database.
+message CreateKernelRequest {
+  // The source of the kernel you wish to add to the database.
+  tuxtape.common.v1.KernelSource kernel_source = 1;
+}
+
+// The response to a `CreateKernelRequest`.
+message CreateKernelResponse {}

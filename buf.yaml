@@ -1,0 +1,5 @@
+# Version of buf.yaml, not current API major.
+version: v2
+
+modules:
+  - path: proto
