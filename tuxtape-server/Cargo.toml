@@ -10,6 +10,7 @@ diesel = { version = "2.2", features= ["postgres", "sqlite", "returning_clauses_
 tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
 libsqlite3-sys = { version = "0.29", features = ["bundled"] }
+diesel-attributes = { path = "diesel-attributes" }
 
 [[bin]]
 name = "tuxtape-server"
