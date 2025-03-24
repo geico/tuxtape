@@ -12,6 +12,11 @@ tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
 libsqlite3-sys = { version = "0.29", features = ["bundled"] }
 diesel-attributes = { path = "diesel-attributes" }
+tonic = {version = "0.12", features = ["tls", "gzip"] }
+tonic-reflection = "0.12"
+tonic-health = "0.12"
+prost = "0.13"
+proto = { path = "../lib/proto" }
 
 [[bin]]
 name = "tuxtape-server"
