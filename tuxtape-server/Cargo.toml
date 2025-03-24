@@ -8,6 +8,11 @@ clap = { version = "4.5", features = ["derive", "env"] }
 tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
 tuxtape-database-bridge = { path = "tuxtape-database-bridge" }
+tonic = {version = "0.12", features = ["tls", "gzip"] }
+tonic-reflection = "0.12"
+tonic-health = "0.12"
+prost = "0.13"
+proto = { path = "../lib/proto" }
 
 [[bin]]
 name = "tuxtape-server"
