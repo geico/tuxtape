@@ -2,5 +2,6 @@
 resolver = "3"
 
 members = [
-    "tuxtape-server"
+    "tuxtape-server",
+    "tuxtape-server/tuxtape-database-bridge"
 ]

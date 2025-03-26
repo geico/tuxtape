@@ -1,5 +1,20 @@
-use crate::database::connection;
 use clap::Parser;
+use tuxtape_database_bridge::connection::DatabaseBackend;
+
+#[derive(clap::ValueEnum, Clone, Debug)]
+pub enum CliDatabaseBackend {
+    Pg,
+    Sqlite,
+}
+
+impl From<CliDatabaseBackend> for DatabaseBackend {
+    fn from(val: CliDatabaseBackend) -> Self {
+        match val {
+            CliDatabaseBackend::Pg => DatabaseBackend::Pg,
+            CliDatabaseBackend::Sqlite => DatabaseBackend::Sqlite,
+        }
+    }
+}
 
 #[derive(Parser, Debug)]
 #[command(version, about, long_about = None)]
@@ -10,5 +25,5 @@ pub struct Cli {
     pub db_url: String,
     /// The database backend. If Postgres, this should "pg". If SQLite, this should be "sqlite".
     #[arg(short('b'), long, default_value = "sqlite")]
-    pub db_backend: connection::DatabaseBackend,
+    pub db_backend: CliDatabaseBackend,
 }

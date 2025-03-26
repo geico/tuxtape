@@ -2,7 +2,7 @@ use diesel::prelude::*;
 use diesel::{Connection, MultiConnection, PgConnection, SqliteConnection};
 
 /// The allowed database backends
-#[derive(Clone, Debug, clap::ValueEnum)]
+#[derive(Clone, Debug)]
 pub enum DatabaseBackend {
     Pg,
     Sqlite,

@@ -1,15 +1,13 @@
 [package]
 name = "tuxtape-server"
-version = "0.1.0"
 edition = "2024"
 description = "The central server for a complete TuxTape environment."
 
 [dependencies]
 clap = { version = "4.5", features = ["derive", "env"] }
-diesel = { version = "2.2", features= ["postgres", "sqlite", "returning_clauses_for_sqlite_3_35" ]}
 tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
-libsqlite3-sys = { version = "0.29", features = ["bundled"] }
+tuxtape-database-bridge = { path = "tuxtape-database-bridge" }
 
 [[bin]]
 name = "tuxtape-server"
