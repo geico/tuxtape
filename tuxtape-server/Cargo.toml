@@ -1,0 +1,14 @@
+[package]
+name = "tuxtape-server"
+edition = "2024"
+description = "The central server for a complete TuxTape environment."
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "env"] }
+tokio = { version = "1.44", features = ["full"] }
+color-eyre = "0.6"
+tuxtape-database-bridge = { path = "tuxtape-database-bridge" }
+
+[[bin]]
+name = "tuxtape-server"
+path = "src/main.rs"
