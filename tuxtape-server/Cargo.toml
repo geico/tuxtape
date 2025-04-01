@@ -5,15 +5,24 @@ description = "The central server for a complete TuxTape environment."
 
 [dependencies]
 clap = { version = "4.5", features = ["derive", "env"] }
+diesel = { version = "2.2", features= ["postgres", "sqlite", "returning_clauses_for_sqlite_3_35" ]}
+diesel_migrations = "2.2"
 tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
-tuxtape-database-bridge = { path = "tuxtape-database-bridge" }
 tonic = {version = "0.12", features = ["tls", "gzip"] }
 tonic-reflection = "0.12"
 tonic-health = "0.12"
 prost = "0.13"
 proto = { path = "../lib/proto" }
 
+[build-dependencies]
+dsync = "0.1"
+diesel = { version = "2.2", features= ["postgres", "sqlite" ]}
+
 [[bin]]
 name = "tuxtape-server"
 path = "src/main.rs"
+
+[lib]
+name = "tuxtape_database_bridge"
+path = "src/tuxtape_database_bridge/lib.rs"

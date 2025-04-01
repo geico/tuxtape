@@ -3,7 +3,7 @@ use diesel::migration::MigrationVersion;
 use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
 
 // Embed all migrations into the binary
-const MIGRATIONS: EmbeddedMigrations = embed_migrations!("../migrations");
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
 pub type MigrationError =
     std::boxed::Box<(dyn std::error::Error + std::marker::Send + std::marker::Sync + 'static)>;

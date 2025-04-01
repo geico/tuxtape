@@ -1,8 +1,0 @@
-# .gitignore suggestion thanks to https://stackoverflow.com/a/932982
-# Cannot do this in global .gitignore as `cargo build` sometimes fails on 
-# rebuild if `generated/` doesn't exist.
-
-# Ignore everything in this directory
-*
-# Except this file
-!.gitignore
