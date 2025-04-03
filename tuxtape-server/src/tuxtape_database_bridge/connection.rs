@@ -15,6 +15,24 @@ pub enum AnyConnection {
     Sqlite(diesel::SqliteConnection),
 }
 
+impl AnyConnection {
+    /// Establish a connection to a database backend.
+    pub fn establish_connection(
+        conn_details: &DatabaseConnectionDetails,
+    ) -> ConnectionResult<Self> {
+        match conn_details.backend {
+            DatabaseBackend::Sqlite => {
+                let sqlite_connection = SqliteConnection::establish(&conn_details.db_url)?;
+                Ok(AnyConnection::Sqlite(sqlite_connection))
+            }
+            DatabaseBackend::Pg => {
+                let pg_connection = PgConnection::establish(&conn_details.db_url)?;
+                Ok(AnyConnection::Pg(pg_connection))
+            }
+        }
+    }
+}
+
 /// The arguments required to form a database connection.
 pub struct DatabaseConnectionDetails {
     pub backend: DatabaseBackend,
@@ -26,22 +44,6 @@ impl DatabaseConnectionDetails {
         DatabaseConnectionDetails {
             backend,
             db_url: db_url.to_string(),
-        }
-    }
-}
-
-/// Establish a connection to a database backend.
-pub fn establish_connection(
-    conn_details: &DatabaseConnectionDetails,
-) -> ConnectionResult<AnyConnection> {
-    match conn_details.backend {
-        DatabaseBackend::Sqlite => {
-            let sqlite_connection = SqliteConnection::establish(&conn_details.db_url)?;
-            Ok(AnyConnection::Sqlite(sqlite_connection))
-        }
-        DatabaseBackend::Pg => {
-            let pg_connection = PgConnection::establish(&conn_details.db_url)?;
-            Ok(AnyConnection::Pg(pg_connection))
         }
     }
 }

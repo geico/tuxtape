@@ -1,9 +1,13 @@
 use clap::Parser;
 use cli::Cli;
 use color_eyre::{Result, eyre::eyre};
+use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
 use grpc::server;
 use std::sync::Arc;
-use tuxtape_database_bridge::connection::DatabaseConnectionDetails;
+use tuxtape_database_bridge::connection::{AnyConnection, DatabaseConnectionDetails};
+
+// Embed all migrations into the binary
+const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
 
 mod cli;
 mod grpc;
@@ -18,11 +22,10 @@ async fn main() -> Result<()> {
         &args.db_url,
     ));
 
-    let mut conn =
-        tuxtape_database_bridge::connection::establish_connection(&db_conn_details.clone())?;
+    let mut conn = AnyConnection::establish_connection(&db_conn_details.clone())?;
 
-    // Run any pending database migrations before proceeding.
-    tuxtape_database_bridge::migration::run_pending_migrations(&mut conn).map_err(|e| eyre!(e))?;
+    conn.run_pending_migrations(MIGRATIONS)
+        .map_err(|e| eyre!(e))?;
 
     loop {
         println!("Starting gRPC server at {}", args.grpc_addr);

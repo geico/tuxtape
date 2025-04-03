@@ -1,6 +1,5 @@
 pub mod connection;
 pub mod grpc;
-pub mod migration;
 mod models;
 mod schema;
 
