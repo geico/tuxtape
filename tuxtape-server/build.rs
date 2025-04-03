@@ -1,6 +1,5 @@
 use dsync::{GenerationConfig, GenerationConfigOpts, TableOptions};
 use std::path::Path;
-include!("src/tuxtape_database_bridge/connection.rs");
 
 /// Generates model code into src/models
 pub fn main() -> Result<(), Box<dyn std::error::Error>> {
