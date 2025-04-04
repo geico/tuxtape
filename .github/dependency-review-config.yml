@@ -8,3 +8,6 @@ allow-licenses:
   - MPL-2.0
   - Unicode-3.0
   - Zlib
+allow-dependencies-licenses:
+  - pkg:cargo/matchit
+  - pkg:cargo/ring

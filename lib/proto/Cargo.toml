@@ -1,0 +1,14 @@
+[package]
+name = "proto"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+tonic = "0.12"
+prost = "0.13"
+
+[build-dependencies]
+tonic-build = "0.12"
+
+[lib]
+path = "lib.rs"

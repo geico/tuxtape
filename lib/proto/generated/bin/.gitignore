@@ -1,6 +1,6 @@
 # .gitignore suggestion thanks to https://stackoverflow.com/a/932982
-# Cannot do this in global .gitignore as `cargo build` sometimes fails on
-# rebuild if `src/models` doesn't exist.
+# Cannot do this in global .gitignore as `cargo build` fails when bin/ and src/
+# don't exist.
 
 # Ignore everything in this directory
 *

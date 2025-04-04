@@ -1,7 +1,7 @@
 [workspace]
 resolver = "3"
 
-members = [
+members = [ 
+    "lib/proto", 
     "tuxtape-server",
-    "tuxtape-server/tuxtape-database-bridge"
 ]
