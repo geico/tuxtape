@@ -9,6 +9,7 @@ prost = "0.13"
 
 [build-dependencies]
 tonic-build = "0.12"
+walkdir = "2.5"
 
 [lib]
 path = "lib.rs"
