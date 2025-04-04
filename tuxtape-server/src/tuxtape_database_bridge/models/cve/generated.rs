@@ -42,8 +42,6 @@ pub struct Cve {
 #[derive(Debug, Clone, diesel::Insertable)]
 #[diesel(table_name=cve)]
 pub struct CreateCve {
-    /// Field representing column `id`
-    pub id: i32,
     /// Field representing column `cve_id`
     pub cve_id: String,
     /// Field representing column `vulnerability_id`

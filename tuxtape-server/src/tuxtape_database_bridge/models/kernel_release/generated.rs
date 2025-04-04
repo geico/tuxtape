@@ -22,8 +22,6 @@ pub struct KernelRelease {
 #[derive(Debug, Clone, diesel::Insertable)]
 #[diesel(table_name=kernel_release)]
 pub struct CreateKernelRelease {
-    /// Field representing column `id`
-    pub id: i32,
     /// Field representing column `mainline_kernel_release_id`
     pub mainline_kernel_release_id: i32,
     /// Field representing column `version_local`
