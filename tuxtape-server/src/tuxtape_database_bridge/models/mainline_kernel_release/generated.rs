@@ -25,8 +25,6 @@ pub struct MainlineKernelRelease {
 #[derive(Debug, Clone, diesel::Insertable)]
 #[diesel(table_name=mainline_kernel_release)]
 pub struct CreateMainlineKernelRelease {
-    /// Field representing column `id`
-    pub id: i32,
     /// Field representing column `version_major`
     pub version_major: i32,
     /// Field representing column `version_minor`

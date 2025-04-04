@@ -22,8 +22,6 @@ pub struct KernelSource {
 #[derive(Debug, Clone, diesel::Insertable)]
 #[diesel(table_name=kernel_source)]
 pub struct CreateKernelSource {
-    /// Field representing column `id`
-    pub id: i32,
     /// Field representing column `kernel_release_id`
     pub kernel_release_id: i32,
     /// Field representing column `url`

@@ -21,8 +21,6 @@ pub struct Meta {
 #[derive(Debug, Clone, diesel::Insertable)]
 #[diesel(table_name=meta)]
 pub struct CreateMeta {
-    /// Field representing column `id`
-    pub id: i32,
     /// Field representing column `based_on_vulns_commit`
     pub based_on_vulns_commit: String,
     /// Field representing column `last_run_unix_time`
