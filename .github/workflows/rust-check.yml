@@ -1,0 +1,27 @@
+name: 'Rust Check'
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  Rust-Check:
+    runs-on: ubuntu-latest
+    env:
+        RUSTFLAGS: -D warnings
+    container: rust:latest
+    steps:
+      - name: 'Checkout Repository'
+        uses: actions/checkout@v4
+      - name: 'Check Format'
+        run: cargo fmt --all -- --check
+    #   - name: 'Check Clippy'
+    #     run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: 'Ensure Generated Code is Updated'
+        run: cargo build && \
+            if [ $(git status --porcelain | wc -l) -eq "0" ]; then
+                echo "Generated Code is Updated"
+            else
+                echo "Generated Code is Outdated"
+                exit 1
+            fi
