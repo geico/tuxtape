@@ -37,7 +37,7 @@ rusqlite = { version = "0.32", features = ["bundled", "array"] }
 serde = { version = "1.0", features = ["derive", "rc"] }
 serde_derive = "1.0"
 serde_json = "1.0"
-tokio = { version = "1.40", features = ["full"] }
+tokio = { version = "1.43", features = ["full"] }
 tonic = {version = "0.12", features = ["tls", "gzip"] }
 tonic-reflection = "0.12"
 tonic-health = "0.12"
