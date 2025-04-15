@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, vulnerability_instance_id, kernel_file_id\n            FROM vulnerability_instance_affected_file\n            WHERE id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "vulnerability_instance_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "kernel_file_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "34c79fc7d48f41a16c7ebfaf2f9a28a87fd0e8e1f81954d6152335fc13bd7d5e"
+}

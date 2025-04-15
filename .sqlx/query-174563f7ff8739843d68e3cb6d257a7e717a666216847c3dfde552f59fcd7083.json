@@ -1,0 +1,88 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT * FROM cve WHERE id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "cve_id",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "base_score",
+        "type_info": "Float4"
+      },
+      {
+        "ordinal": 3,
+        "name": "attack_vector",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "attack_complexity",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "privileges_required",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "user_interaction",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "scope",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "confidentiality_impact",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "integrity_impact",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "availability_impact",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "description",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "174563f7ff8739843d68e3cb6d257a7e717a666216847c3dfde552f59fcd7083"
+}

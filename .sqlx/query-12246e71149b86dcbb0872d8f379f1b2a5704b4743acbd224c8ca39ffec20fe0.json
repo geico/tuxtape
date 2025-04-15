@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, based_on_vulns_commit, last_run_unix_time\n            FROM meta\n            WHERE id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "based_on_vulns_commit",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "last_run_unix_time",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "12246e71149b86dcbb0872d8f379f1b2a5704b4743acbd224c8ca39ffec20fe0"
+}

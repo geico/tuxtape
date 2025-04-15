@@ -1,0 +1,22 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO kernel_file (file_path)\n            VALUES ($1)\n            ON CONFLICT (file_path) DO UPDATE\n                SET file_path = excluded.file_path\n            RETURNING id\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false
+    ]
+  },
+  "hash": "89f2f1e9b74046249ccc328c8575bdadfb89a48347340b5eb22444fe6405e1d1"
+}

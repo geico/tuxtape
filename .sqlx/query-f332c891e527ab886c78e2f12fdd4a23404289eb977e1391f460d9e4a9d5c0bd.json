@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO vulnerability_instance_affected_file (\n                    vulnerability_instance_id,\n                    kernel_file_id\n                )\n                VALUES ($1, $2)\n                ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "f332c891e527ab886c78e2f12fdd4a23404289eb977e1391f460d9e4a9d5c0bd"
+}
