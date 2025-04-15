@@ -70,49 +70,47 @@ pub struct KernelRelease {
     /// Even though the most current mainline 6.8 release at the time of this
     /// Ubuntu kernel was 6.8.12 (this is reflected in the
     /// `/proc/version_signature`), the patch set provided by Canonical is based on
-    /// 6.8.0, so that is what `mainline_kernel_version` should be set to.
+    /// 6.8.0, so that is what `mainline_kernel_release` should be set to.
     #[prost(message, optional, tag = "1")]
-    pub mainline_kernel_version: ::core::option::Option<MainlineKernelVersion>,
+    pub mainline_kernel_release: ::core::option::Option<MainlineKernelRelease>,
     /// The `CONFIG_LOCALVERSION` of the described kernel (see this message's
     /// documentation for more details).
-    /// Will be null if a local_version is not set.
     ///
-    /// IMPORTANT: Even though this can be null in theory, it shouldn't ever be.
-    /// See this message's documentation to understand why.
-    #[prost(string, optional, tag = "2")]
-    pub local_version: ::core::option::Option<::prost::alloc::string::String>,
+    /// IMPORTANT: Every kernel on the managed fleet must have a unique
+    /// `local_version` so that the kernel can be uniquely identified.
+    #[prost(string, tag = "2")]
+    pub local_version: ::prost::alloc::string::String,
 }
-/// The version of a mainline kernel.
+/// The release of a mainline kernel.
 /// In the case of downstream kernels, this is the mainline kernel which the
 /// downstream patches are based on.
 #[derive(Clone, PartialEq, ::prost::Message)]
-pub struct MainlineKernelVersion {
+pub struct MainlineKernelRelease {
     /// The major version of the kernel.
     /// Matches the Makefile's `VERSION` variable.
     #[prost(uint32, tag = "1")]
-    pub major: u32,
+    pub major_version: u32,
     /// The minor version of the kernel.
     /// Matches the Makefile's `PATCHLEVEL` variable.
     #[prost(uint32, tag = "2")]
-    pub minor: u32,
+    pub minor_version: u32,
     /// The patch version of the kernel.
     /// Matches the Makefile's `SUBLEVEL` variable.
-    /// Will be null if there was no patch commit on the kernel. Do not set
-    /// this value to `0` if there is no patch commit.
-    #[prost(uint32, optional, tag = "3")]
-    pub patch: ::core::option::Option<u32>,
+    /// Set this value to `0` if there is no `SUBLEVEL`.
+    #[prost(uint32, tag = "3")]
+    pub patch_version: u32,
     /// Should represent the release candidate version if one exists.
     /// Matches the Makefile's `EXTRAVERSION` variable.
     /// e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
     /// (make sure to include the `-`).
-    /// Will be null if the kernel does not contain an EXTRAVERSION.
-    #[prost(string, optional, tag = "4")]
-    pub extra_version: ::core::option::Option<::prost::alloc::string::String>,
+    /// Set this value to `""` if there is no `EXTRAVERSION`.
+    #[prost(string, tag = "4")]
+    pub extra_version: ::prost::alloc::string::String,
 }
 /// A particular Vulnerability. Almost always describes a Cve.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Vulnerability {
-    /// Instances of this Vulnerability across different MainlineKernelVersions.
+    /// Instances of this Vulnerability across different MainlineKernelReleases.
     /// Will be empty if no instances exist in the managed fleet.
     #[prost(message, repeated, tag = "1")]
     pub instances: ::prost::alloc::vec::Vec<VulnerabilityInstance>,
@@ -140,42 +138,44 @@ pub struct Vulnerability {
 /// for both kernel trains.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VulnerabilityInstance {
-    /// The `MainlineKernelVersion` in which the Vulnerability was introduced.
+    /// The `MainlineKernelRelease` in which the Vulnerability was introduced.
     #[prost(message, optional, tag = "1")]
-    pub introduced: ::core::option::Option<MainlineKernelVersion>,
-    /// The `MainlineKernelVersion` that patched the `Vulnerability`.
+    pub introduced: ::core::option::Option<MainlineKernelRelease>,
+    /// The `MainlineKernelRelease` that patched the `Vulnerability`.
     /// Will be null if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelVersion`.
+    /// `MainlineKernelRelease`.
     #[prost(message, optional, tag = "2")]
-    pub fixed: ::core::option::Option<MainlineKernelVersion>,
+    pub fixed: ::core::option::Option<MainlineKernelRelease>,
     /// The prefix of the commit hash (first 12 characters) that
-    /// patched the `Vulnerability` in the fixed `MainlineKernelVersion`.
+    /// patched the `Vulnerability` in the fixed `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelVersion`.
+    /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "3")]
     pub fixed_commit_prefix: ::core::option::Option<::prost::alloc::string::String>,
     /// All files affected in this instance of the `Vulnerability`.
     /// Will be empty if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelVersion`.
+    /// `MainlineKernelRelease`.
     #[prost(string, repeated, tag = "4")]
     pub affected_files: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     /// Metadata on all kernels affected by this `Vulnerability`.
     /// Will be empty if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelVersion` or if no kernel build on the fleet is affected by
+    /// `MainlineKernelRelease` or if no kernel build on the fleet is affected by
     /// this `Vulnerability`.
     #[prost(message, repeated, tag = "5")]
     pub affected_kernels: ::prost::alloc::vec::Vec<KernelSource>,
     /// The raw git diff of the commit that patched the `Vulnerability` in the
-    /// fixed `MainlineKernelVersion`.
+    /// fixed `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelVersion`.
+    /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "6")]
     pub raw_patch: ::core::option::Option<::prost::alloc::string::String>,
-    /// A URL into the archive where a kpatch-compatible patch approved for
-    /// deployment is stored.
-    /// Will be null if no deployable patch has been approved.
-    #[prost(string, optional, tag = "7")]
-    pub deployable_patch_url: ::core::option::Option<::prost::alloc::string::String>,
+}
+/// Describes a patch module for a particular `KernelRelease`.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct KernelPatch {
+    /// The URL to the patch module.
+    #[prost(string, tag = "1")]
+    pub url: ::prost::alloc::string::String,
 }
 /// A CVE described by a particular `Vulnerability.`
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -185,7 +185,7 @@ pub struct Cve {
     pub id: ::prost::alloc::string::String,
     /// Will be null if the CVE has not yet been evaluated by NIST.
     #[prost(float, optional, tag = "2")]
-    pub severity: ::core::option::Option<f32>,
+    pub base_score: ::core::option::Option<f32>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
     #[prost(string, optional, tag = "3")]
     pub attack_vector: ::core::option::Option<::prost::alloc::string::String>,

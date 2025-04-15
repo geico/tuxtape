@@ -69,36 +69,34 @@ message KernelRelease {
   // Even though the most current mainline 6.8 release at the time of this
   // Ubuntu kernel was 6.8.12 (this is reflected in the
   // `/proc/version_signature`), the patch set provided by Canonical is based on
-  // 6.8.0, so that is what `mainline_kernel_version` should be set to.
-  MainlineKernelVersion mainline_kernel_version = 1;
+  // 6.8.0, so that is what `mainline_kernel_release` should be set to.
+  MainlineKernelRelease mainline_kernel_release = 1;
   // The `CONFIG_LOCALVERSION` of the described kernel (see this message's
   // documentation for more details).
-  // Will be null if a local_version is not set.
   //
-  // IMPORTANT: Even though this can be null in theory, it shouldn't ever be.
-  // See this message's documentation to understand why.
-  optional string local_version = 2;
+  // IMPORTANT: Every kernel on the managed fleet must have a unique
+  // `local_version` so that the kernel can be uniquely identified.
+  string local_version = 2;
 }
 
-// The version of a mainline kernel.
+// The release of a mainline kernel.
 // In the case of downstream kernels, this is the mainline kernel which the
 // downstream patches are based on.
-message MainlineKernelVersion {
+message MainlineKernelRelease {
   // The major version of the kernel.
   // Matches the Makefile's `VERSION` variable.
-  uint32 major = 1;
+  uint32 major_version = 1;
   // The minor version of the kernel.
   // Matches the Makefile's `PATCHLEVEL` variable.
-  uint32 minor = 2;
+  uint32 minor_version = 2;
   // The patch version of the kernel.
   // Matches the Makefile's `SUBLEVEL` variable.
-  // Will be null if there was no patch commit on the kernel. Do not set
-  // this value to `0` if there is no patch commit.
-  optional uint32 patch = 3;
+  // Set this value to `0` if there is no `SUBLEVEL`.
+  uint32 patch_version = 3;
   // Should represent the release candidate version if one exists.
   // Matches the Makefile's `EXTRAVERSION` variable.
   // e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
   // (make sure to include the `-`).
-  // Will be null if the kernel does not contain an EXTRAVERSION.
-  optional string extra_version = 4;
+  // Set this value to `""` if there is no `EXTRAVERSION`.
+  string extra_version = 4;
 }
