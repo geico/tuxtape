@@ -1,1 +1,10 @@
-// TODO
+pub mod cve;
+pub mod kernel_file;
+pub mod kernel_release;
+pub mod kernel_release_file;
+pub mod kernel_source;
+pub mod mainline_kernel_release;
+pub mod meta;
+pub mod vulnerability;
+pub mod vulnerability_instance;
+pub mod vulnerability_instance_affected_file;
