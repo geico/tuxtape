@@ -1,13 +1,11 @@
 use clap::Parser;
 use cli::Cli;
-use color_eyre::{Result, eyre::eyre};
-use diesel_migrations::{EmbeddedMigrations, MigrationHarness, embed_migrations};
+use color_eyre::Result;
 use grpc::server;
-use std::sync::Arc;
-use tuxtape_database_bridge::connection::{AnyConnection, DatabaseConnectionDetails};
+use sqlx::{PgPool, migrate::Migrator};
 
 // Embed all migrations into the binary
-const MIGRATIONS: EmbeddedMigrations = embed_migrations!("migrations");
+static MIGRATOR: Migrator = sqlx::migrate!();
 
 mod cli;
 mod grpc;
@@ -16,16 +14,13 @@ mod grpc;
 async fn main() -> Result<()> {
     let args = Cli::parse();
 
-    // Attempt to connect to database and exit early and loudly if failed.
-    let db_conn_details = Arc::new(DatabaseConnectionDetails::new(
-        args.db_backend.into(),
-        &args.db_url,
-    ));
+    // Attempt to connect to database and exit early and loudly if failed
+    // Note: The Pool type is wrapped in an Arc, so cloning this only increases
+    // the ref count.
+    let db_pool = PgPool::connect(&args.db_url).await?;
 
-    let mut conn = AnyConnection::establish_connection(&db_conn_details.clone())?;
-
-    conn.run_pending_migrations(MIGRATIONS)
-        .map_err(|e| eyre!(e))?;
+    // Run pending migrations
+    MIGRATOR.run(&db_pool).await?;
 
     loop {
         println!("Starting gRPC server at {}", args.grpc_addr);
@@ -33,7 +28,7 @@ async fn main() -> Result<()> {
         let _ = server::start_server(
             args.grpc_addr,
             args.tls.clone().map(|cmd| cmd.into()),
-            db_conn_details.clone(),
+            &db_pool,
         )
         .await
         .map_err(|e| eprintln!("gRPC server crashed: {e}"));

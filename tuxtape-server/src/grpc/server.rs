@@ -5,21 +5,20 @@ use color_eyre::Result;
 use proto::tuxtape::server::database::v1::database_service_server::DatabaseServiceServer;
 use proto::tuxtape::server::fleet_client::v1::fleet_client_service_server::FleetClientServiceServer;
 use proto::tuxtape::server::registrar::v1::registrar_service_server::RegistrarServiceServer;
+use sqlx::PgPool;
 use std::net::SocketAddr;
-use std::sync::Arc;
 use tonic::codec::CompressionEncoding;
 use tonic::transport::{Server, ServerTlsConfig};
-use tuxtape_database_bridge::connection::DatabaseConnectionDetails;
 
 /// Starts a server with all tuxtape-server gRPC services.
 pub async fn start_server(
     grpc_addr: SocketAddr,
     tls_config: Option<ServerTlsConfig>,
-    db_conn_details: Arc<DatabaseConnectionDetails>,
+    db_pool: &PgPool,
 ) -> Result<()> {
-    let database_service_state = DatabaseServiceState::new(db_conn_details.clone());
-    let fleet_client_service_state = FleetClientServiceState::new(db_conn_details.clone());
-    let registrar_service_state = RegistrarServiceState::new(db_conn_details.clone());
+    let database_service_state = DatabaseServiceState::new(db_pool);
+    let fleet_client_service_state = FleetClientServiceState::new(db_pool);
+    let registrar_service_state = RegistrarServiceState::new(db_pool);
 
     let file_descriptor_set = std::fs::read(proto::FILE_DESCRIPTOR_SET_PATH)?;
 

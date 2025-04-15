@@ -1,16 +1,17 @@
 use proto::tuxtape::server::database::v1::database_service_server::DatabaseService;
 use proto::tuxtape::server::database::v1::*;
-use std::sync::Arc;
+use sqlx::PgPool;
 use tonic::{Request, Response, Status};
-use tuxtape_database_bridge::connection::DatabaseConnectionDetails;
 
 pub struct DatabaseServiceState {
-    db_conn_details: Arc<DatabaseConnectionDetails>,
+    db_pool: PgPool,
 }
 
 impl DatabaseServiceState {
-    pub fn new(db_conn_details: Arc<DatabaseConnectionDetails>) -> Self {
-        DatabaseServiceState { db_conn_details }
+    pub fn new(db_pool: &PgPool) -> Self {
+        DatabaseServiceState {
+            db_pool: db_pool.clone(),
+        }
     }
 }
 

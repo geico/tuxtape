@@ -1,9 +1,0 @@
-DROP TABLE vulnerability;
-DROP TABLE vulnerability_instance;
-DROP TABLE vulnerability_instance_affected_file;
-DROP TABLE cve;
-DROP TABLE mainline_kernel_release;
-DROP TABLE kernel_release;
-DROP TABLE kernel_source;
-DROP TABLE kernel_file;
-DROP TABLE meta;
