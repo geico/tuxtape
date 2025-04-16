@@ -1,16 +1,17 @@
 use proto::tuxtape::server::fleet_client::v1::fleet_client_service_server::FleetClientService;
 use proto::tuxtape::server::fleet_client::v1::*;
-use std::sync::Arc;
+use sqlx::PgPool;
 use tonic::{Request, Response, Status};
-use tuxtape_database_bridge::connection::DatabaseConnectionDetails;
 
 pub struct FleetClientServiceState {
-    db_conn_details: Arc<DatabaseConnectionDetails>,
+    db_pool: PgPool,
 }
 
 impl FleetClientServiceState {
-    pub fn new(db_conn_details: Arc<DatabaseConnectionDetails>) -> Self {
-        FleetClientServiceState { db_conn_details }
+    pub fn new(db_pool: &PgPool) -> Self {
+        FleetClientServiceState {
+            db_pool: db_pool.clone(),
+        }
     }
 }
 
