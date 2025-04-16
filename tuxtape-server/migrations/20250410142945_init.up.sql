@@ -93,7 +93,7 @@ CREATE TABLE
         vulnerability_instance_id INTEGER NOT NULL REFERENCES vulnerability_instance,
         kernel_release_id INTEGER NOT NULL REFERENCES kernel_release,
         url TEXT NOT NULL UNIQUE,
-        UNIQUE (vulnerability_id, kernel_release_id)
+        UNIQUE (vulnerability_instance_id, kernel_release_id)
     );
 
 CREATE TABLE
