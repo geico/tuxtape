@@ -169,11 +169,13 @@ pub struct VulnerabilityInstance {
     /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "6")]
     pub raw_patch: ::core::option::Option<::prost::alloc::string::String>,
-    /// A URL into the archive where a kpatch-compatible patch approved for
-    /// deployment is stored.
-    /// Will be null if no deployable patch has been approved.
-    #[prost(string, optional, tag = "7")]
-    pub deployable_patch_url: ::core::option::Option<::prost::alloc::string::String>,
+}
+/// Describes a patch module for a particular `KernelRelease`.
+#[derive(Clone, PartialEq, ::prost::Message)]
+pub struct KernelPatch {
+    /// The URL to the patch module.
+    #[prost(string, tag = "1")]
+    pub url: ::prost::alloc::string::String,
 }
 /// A CVE described by a particular `Vulnerability.`
 #[derive(Clone, PartialEq, ::prost::Message)]
