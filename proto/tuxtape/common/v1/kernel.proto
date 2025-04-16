@@ -73,11 +73,10 @@ message KernelRelease {
   MainlineKernelRelease mainline_kernel_release = 1;
   // The `CONFIG_LOCALVERSION` of the described kernel (see this message's
   // documentation for more details).
-  // Will be null if a local_version is not set.
   //
-  // IMPORTANT: Even though this can be null in theory, it shouldn't ever be.
-  // See this message's documentation to understand why.
-  optional string local_version = 2;
+  // IMPORTANT: Every kernel on the managed fleet must have a unique
+  // `local_version` so that the kernel can be uniquely identified.
+  string local_version = 2;
 }
 
 // The release of a mainline kernel.

@@ -75,12 +75,11 @@ pub struct KernelRelease {
     pub mainline_kernel_release: ::core::option::Option<MainlineKernelRelease>,
     /// The `CONFIG_LOCALVERSION` of the described kernel (see this message's
     /// documentation for more details).
-    /// Will be null if a local_version is not set.
     ///
-    /// IMPORTANT: Even though this can be null in theory, it shouldn't ever be.
-    /// See this message's documentation to understand why.
-    #[prost(string, optional, tag = "2")]
-    pub local_version: ::core::option::Option<::prost::alloc::string::String>,
+    /// IMPORTANT: Every kernel on the managed fleet must have a unique
+    /// `local_version` so that the kernel can be uniquely identified.
+    #[prost(string, tag = "2")]
+    pub local_version: ::prost::alloc::string::String,
 }
 /// The release of a mainline kernel.
 /// In the case of downstream kernels, this is the mainline kernel which the
