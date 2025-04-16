@@ -185,7 +185,7 @@ pub struct Cve {
     pub id: ::prost::alloc::string::String,
     /// Will be null if the CVE has not yet been evaluated by NIST.
     #[prost(float, optional, tag = "2")]
-    pub severity: ::core::option::Option<f32>,
+    pub base_score: ::core::option::Option<f32>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
     #[prost(string, optional, tag = "3")]
     pub attack_vector: ::core::option::Option<::prost::alloc::string::String>,
