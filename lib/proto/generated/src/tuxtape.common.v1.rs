@@ -89,24 +89,23 @@ pub struct MainlineKernelRelease {
     /// The major version of the kernel.
     /// Matches the Makefile's `VERSION` variable.
     #[prost(uint32, tag = "1")]
-    pub major: u32,
+    pub major_version: u32,
     /// The minor version of the kernel.
     /// Matches the Makefile's `PATCHLEVEL` variable.
     #[prost(uint32, tag = "2")]
-    pub minor: u32,
+    pub minor_version: u32,
     /// The patch version of the kernel.
     /// Matches the Makefile's `SUBLEVEL` variable.
-    /// Will be null if there was no patch commit on the kernel. Do not set
-    /// this value to `0` if there is no patch commit.
-    #[prost(uint32, optional, tag = "3")]
-    pub patch: ::core::option::Option<u32>,
+    /// Set this value to `0` if there is no `SUBLEVEL`.
+    #[prost(uint32, tag = "3")]
+    pub patch_version: u32,
     /// Should represent the release candidate version if one exists.
     /// Matches the Makefile's `EXTRAVERSION` variable.
     /// e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
     /// (make sure to include the `-`).
-    /// Will be null if the kernel does not contain an EXTRAVERSION.
-    #[prost(string, optional, tag = "4")]
-    pub extra: ::core::option::Option<::prost::alloc::string::String>,
+    /// Set this value to `""` if there is no `EXTRAVERSION`.
+    #[prost(string, tag = "4")]
+    pub extra_version: ::prost::alloc::string::String,
 }
 /// A particular Vulnerability. Almost always describes a Cve.
 #[derive(Clone, PartialEq, ::prost::Message)]

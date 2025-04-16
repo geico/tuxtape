@@ -85,19 +85,18 @@ message KernelRelease {
 message MainlineKernelRelease {
   // The major version of the kernel.
   // Matches the Makefile's `VERSION` variable.
-  uint32 major = 1;
+  uint32 major_version = 1;
   // The minor version of the kernel.
   // Matches the Makefile's `PATCHLEVEL` variable.
-  uint32 minor = 2;
+  uint32 minor_version = 2;
   // The patch version of the kernel.
   // Matches the Makefile's `SUBLEVEL` variable.
-  // Will be null if there was no patch commit on the kernel. Do not set
-  // this value to `0` if there is no patch commit.
-  optional uint32 patch = 3;
+  // Set this value to `0` if there is no `SUBLEVEL`.
+  uint32 patch_version = 3;
   // Should represent the release candidate version if one exists.
   // Matches the Makefile's `EXTRAVERSION` variable.
   // e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
   // (make sure to include the `-`).
-  // Will be null if the kernel does not contain an EXTRAVERSION.
-  optional string extra = 4;
+  // Set this value to `""` if there is no `EXTRAVERSION`.
+  string extra_version = 4;
 }
