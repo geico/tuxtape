@@ -157,12 +157,12 @@ pub struct VulnerabilityInstance {
     /// `MainlineKernelRelease`.
     #[prost(string, repeated, tag = "4")]
     pub affected_files: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Metadata on all kernels affected by this `Vulnerability`.
+    /// All kernel releases affected by this `Vulnerability`.
     /// Will be empty if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease` or if no kernel build on the fleet is affected by
     /// this `Vulnerability`.
     #[prost(message, repeated, tag = "5")]
-    pub affected_kernels: ::prost::alloc::vec::Vec<KernelSource>,
+    pub affected_kernels: ::prost::alloc::vec::Vec<KernelRelease>,
     /// The raw git diff of the commit that patched the `Vulnerability` in the
     /// fixed `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
