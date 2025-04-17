@@ -168,7 +168,7 @@ pub struct VulnerabilityInstance {
     /// Will be null if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "6")]
-    pub raw_patch: ::core::option::Option<::prost::alloc::string::String>,
+    pub patch_diff: ::core::option::Option<::prost::alloc::string::String>,
 }
 /// Describes a patch module for a particular `KernelRelease`.
 #[derive(Clone, PartialEq, ::prost::Message)]
