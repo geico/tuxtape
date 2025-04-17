@@ -7,46 +7,22 @@ import "tuxtape/common/v1/vulnerability.proto";
 // The main service for tuxtape-server. This is used to get, create, and update
 // resources within the TuxTape database.
 service DatabaseService {
-  // Get `Vulnerability`s from the database.
+  // Get `Vulnerability`s from the database that affect at least one `KernelRelease`.
   rpc GetVulnerabilities(GetVulnerabilitiesRequest) returns (GetVulnerabilitiesResponse);
+  // Get `VulnerabilityInstances` associated with the provided `Vulnerability`s by their IDs.
+  rpc GetVulnerabilityInstances(GetVulnerabilityInstancesRequest) returns (GetVulnerabilityInstancesResponse);
   // Get a `KernelSource` from the database.
   rpc GetKernelSource(GetKernelSourceRequest) returns (GetKernelSourceResponse);
+  // Get all `KernelRelease`s which are affected by the provided `VulnerabilityInstance` IDs.
+  rpc GetAffectedKernelReleases(GetAffectedKernelReleasesRequest) returns (GetAffectedKernelReleasesResponse);
   // Put a kernel into the database.
   // Once received, tuxtape-server will dispatch a `BuildKernelRequest` to
   // the next available tuxtape-kernel-builder.
   rpc CreateKernel(CreateKernelRequest) returns (CreateKernelResponse);
 }
 
-// Get `Vulnerability`s from the database.
-message GetVulnerabilitiesRequest {
-  // Exclude `Vulnerability`s in result that match these conditions.
-  // Leave this empty if you do not wish to exclude anything.
-  repeated Exclude excludes = 1;
-  // How to look up `Vulnerability`s.
-  oneof get_by {
-    All all = 2;
-    ByKernelRelease kernel_release = 3;
-    // We may later wish to add an option like `ByFleetGroup`.
-  }
-
-  // Specifies what should be excluded from the results.
-  enum Exclude {
-    // Conventional default for enums. Do not use this.
-    EXCLUDE_UNSPECIFIED = 0;
-    // Exclude `Vulnerability`s that have not received a raw patch.
-    EXCLUDE_UNPATCHED = 1;
-    // Exclude `Vulnerability`s that already have a deployable patch.
-    EXCLUDE_DEPLOYABLE_PATCHED = 2;
-  }
-
-  // Get all `Vulnerability`s that aren't filtered by previous excludes.
-  message All {}
-
-  // Get `Vulnerability`s that affect the specified `KernelRelease`s.
-  message ByKernelRelease {
-    repeated tuxtape.common.v1.KernelRelease kernel_release = 1;
-  }
-}
+// Get `Vulnerability`s from the database that affect at least one `KernelRelease`.
+message GetVulnerabilitiesRequest {}
 
 // The response to a `GetVulnerabilitiesRequest`.
 message GetVulnerabilitiesResponse {
@@ -55,10 +31,22 @@ message GetVulnerabilitiesResponse {
   repeated tuxtape.common.v1.Vulnerability vulnerabilities = 1;
 }
 
+// Get `VulnerabilityInstances` associated with the provided `Vulnerability`s by their IDs.
+message GetVulnerabilityInstancesRequest {
+  // The database IDs for the `Vulnerability`s you are requesting.
+  repeated int32 vulnerability_ids = 1;
+}
+
+// The response to a `GetVulnerabilityInstancesRequest`.
+message GetVulnerabilityInstancesResponse {
+  // `VulnerabilityInstance`s that matched the request's `Vulnerability` database IDs.
+  repeated tuxtape.common.v1.VulnerabilityInstance vulnerability_instances = 1;
+}
+
 // Request the `KernelSource` for a `KernelRelease`.
 message GetKernelSourceRequest {
-  // The `KernelRelease` you are requesting a `KernelSource` for.
-  tuxtape.common.v1.KernelRelease kernel_release = 1;
+  // The database ID for the `KernelRelease` you are requesting a `KernelSource` for.
+  int32 kernel_release_id = 1;
 }
 
 // The response to a `GetKernelSourceRequest`.
@@ -67,10 +55,31 @@ message GetKernelSourceResponse {
   optional tuxtape.common.v1.KernelSource kernel_source = 1;
 }
 
+// Get all `KernelRelease`s which are affected by the provided `VulnerabilityInstance` IDs.
+message GetAffectedKernelReleasesRequest {
+  // The IDs for the `VulnerabilityInstance`s you are requesting `KernelRelease`s for.
+  repeated int32 vulnerability_instance_ids = 1;
+}
+
+// The response to a `GetAffectedKernelReleasesRequest`.
+message GetAffectedKernelReleasesResponse {
+  // A tuple of a `VulnerabilityInstance` and the `KernelRelease` that is affected by it.
+  message AffectedKernelRelease {
+    // The database ID for the `VulnerabilityInstance` that is affected.
+    int32 vulnerability_instance_id = 1;
+    // The `KernelRelease` that is affected by the provided `VulnerabilityInstance`.
+    tuxtape.common.v1.KernelRelease kernel_release = 2;
+  }
+
+  // The `KernelRelease`s that are affected by the provided `VulnerabilityInstance`s.
+  repeated AffectedKernelRelease kernel_releases = 1;
+}
+
 // Request to put a new kernel into the database.
 message CreateKernelRequest {
+  tuxtape.common.v1.KernelRelease kernel_release = 1;
   // The source of the kernel you wish to add to the database.
-  tuxtape.common.v1.KernelSource kernel_source = 1;
+  tuxtape.common.v1.KernelSource kernel_source = 2;
 }
 
 // The response to a `CreateKernelRequest`.

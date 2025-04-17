@@ -15,7 +15,7 @@ message BuildPatchRequest {
   // The `KernelSource` the patch is to be built against.
   tuxtape.common.v1.KernelSource kernel_source = 1;
   // The patch itself.
-  bytes patch = 2;
+  string patch_diff = 2;
 }
 
 // The response to a `BuildPatchRequest`.
