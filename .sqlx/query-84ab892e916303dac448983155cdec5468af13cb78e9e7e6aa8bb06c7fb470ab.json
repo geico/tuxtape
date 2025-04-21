@@ -1,0 +1,35 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n                INSERT INTO vulnerability_instance_affected_file (vulnerability_instance_id, kernel_file_id)\n                VALUES ($1, $2)\n                ON CONFLICT (vulnerability_instance_id, kernel_file_id)\n                    DO UPDATE SET vulnerability_instance_id = excluded.vulnerability_instance_id\n                RETURNING *\n                ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "vulnerability_instance_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "kernel_file_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "84ab892e916303dac448983155cdec5468af13cb78e9e7e6aa8bb06c7fb470ab"
+}

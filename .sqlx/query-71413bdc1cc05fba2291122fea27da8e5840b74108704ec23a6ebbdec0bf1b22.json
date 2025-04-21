@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, vulnerability_id, mainline_kernel_release_introduced_id, mainline_kernel_release_fixed_id, fixed_commit, patch_diff\n            FROM vulnerability_instance vi\n            WHERE kernel_release_is_affected_by_vulnerability_instance($1, vi.id)\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "vulnerability_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "mainline_kernel_release_introduced_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "mainline_kernel_release_fixed_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "fixed_commit",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "patch_diff",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "71413bdc1cc05fba2291122fea27da8e5840b74108704ec23a6ebbdec0bf1b22"
+}

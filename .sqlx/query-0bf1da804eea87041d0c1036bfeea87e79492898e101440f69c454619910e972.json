@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, mainline_kernel_release_id, local_version\n            FROM kernel_release\n            WHERE id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "mainline_kernel_release_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "local_version",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "0bf1da804eea87041d0c1036bfeea87e79492898e101440f69c454619910e972"
+}

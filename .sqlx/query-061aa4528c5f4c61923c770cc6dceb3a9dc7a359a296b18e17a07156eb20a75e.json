@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, mainline_kernel_release_id, version_local\n            FROM kernel_release\n            WHERE id = $1\n            ",
+  "query": "\n            SELECT *\n            FROM kernel_release\n            WHERE kernel_release_is_affected_by_vulnerability_instance(kernel_release.id, $1)\n            ",
   "describe": {
     "columns": [
       {
@@ -15,7 +15,7 @@
       },
       {
         "ordinal": 2,
-        "name": "version_local",
+        "name": "local_version",
         "type_info": "Text"
       }
     ],
@@ -30,5 +30,5 @@
       false
     ]
   },
-  "hash": "b9be5ef8c55b9b7c2c9cdeaec837a1d0335c1f4d624598f581eb30c05ed27431"
+  "hash": "061aa4528c5f4c61923c770cc6dceb3a9dc7a359a296b18e17a07156eb20a75e"
 }

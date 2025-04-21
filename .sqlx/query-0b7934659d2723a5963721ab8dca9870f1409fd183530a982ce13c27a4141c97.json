@@ -1,0 +1,34 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            SELECT id, kernel_release_id, kernel_file_id\n            FROM kernel_release_file\n            WHERE kernel_release_id = $1\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "kernel_release_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "kernel_file_id",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "0b7934659d2723a5963721ab8dca9870f1409fd183530a982ce13c27a4141c97"
+}

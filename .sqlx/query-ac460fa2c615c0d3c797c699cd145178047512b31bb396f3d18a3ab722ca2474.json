@@ -1,0 +1,56 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n            INSERT INTO vulnerability_instance (\n                vulnerability_id,\n                mainline_kernel_release_introduced_id,\n                mainline_kernel_release_fixed_id,\n                fixed_commit,\n                patch_diff\n            )\n            VALUES ($1, $2, $3, $4, $5)\n            ON CONFLICT (vulnerability_id, mainline_kernel_release_introduced_id, mainline_kernel_release_fixed_id) DO UPDATE\n                SET vulnerability_id = excluded.vulnerability_id\n            RETURNING *\n            ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "vulnerability_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "mainline_kernel_release_introduced_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 3,
+        "name": "mainline_kernel_release_fixed_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 4,
+        "name": "fixed_commit",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "patch_diff",
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4",
+        "Int4",
+        "Int4",
+        "Text",
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "ac460fa2c615c0d3c797c699cd145178047512b31bb396f3d18a3ab722ca2474"
+}

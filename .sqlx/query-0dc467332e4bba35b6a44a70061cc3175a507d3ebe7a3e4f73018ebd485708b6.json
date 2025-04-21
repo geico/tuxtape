@@ -1,6 +1,6 @@
 {
   "db_name": "PostgreSQL",
-  "query": "\n            SELECT id, version_major, version_minor, version_patch, version_extra\n            FROM mainline_kernel_release\n            WHERE id = $1\n            ",
+  "query": "\n            SELECT id, major_version, minor_version, patch_version, extra_version\n            FROM mainline_kernel_release\n            WHERE id = $1\n            ",
   "describe": {
     "columns": [
       {
@@ -10,22 +10,22 @@
       },
       {
         "ordinal": 1,
-        "name": "version_major",
+        "name": "major_version",
         "type_info": "Int4"
       },
       {
         "ordinal": 2,
-        "name": "version_minor",
+        "name": "minor_version",
         "type_info": "Int4"
       },
       {
         "ordinal": 3,
-        "name": "version_patch",
+        "name": "patch_version",
         "type_info": "Int4"
       },
       {
         "ordinal": 4,
-        "name": "version_extra",
+        "name": "extra_version",
         "type_info": "Text"
       }
     ],
@@ -42,5 +42,5 @@
       false
     ]
   },
-  "hash": "e5f3336ca7726cad76f11da35825be4d7c59f3f428bb3e814d4f98d52d6653f4"
+  "hash": "0dc467332e4bba35b6a44a70061cc3175a507d3ebe7a3e4f73018ebd485708b6"
 }
