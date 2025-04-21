@@ -13,6 +13,7 @@ tonic-reflection = "0.12"
 tonic-health = "0.12"
 prost = "0.13"
 proto = { path = "../lib/proto" }
+thiserror = "2.0"
 
 [[bin]]
 name = "tuxtape-server"
