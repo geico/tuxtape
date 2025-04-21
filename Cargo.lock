@@ -2352,6 +2352,7 @@ dependencies = [
  "prost",
  "proto",
  "sqlx",
+ "thiserror",
  "tokio",
  "tonic",
  "tonic-health",
