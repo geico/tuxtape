@@ -77,7 +77,8 @@ CREATE TABLE
     vulnerability_instance_affected_file (
         id SERIAL PRIMARY KEY,
         vulnerability_instance_id INTEGER NOT NULL REFERENCES vulnerability_instance,
-        kernel_file_id INTEGER NOT NULL REFERENCES kernel_file
+        kernel_file_id INTEGER NOT NULL REFERENCES kernel_file,
+        UNIQUE (vulnerability_instance_id, kernel_file_id)
     );
 
 CREATE TABLE
