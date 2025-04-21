@@ -1,39 +1,7 @@
-use super::kernel_file::KernelFile;
-use sqlx::{Acquire, FromRow, PgConnection, Result, Type};
+use crate::error::{DatabaseBridgeError, Result};
+use sqlx::PgConnection;
 
-pub struct KernelSource {
-    pub url: String,
-    pub files: Vec<KernelFile>,
-}
-
-impl KernelSource {
-    pub async fn insert(&self, conn: &mut PgConnection) -> Result<i32> {
-        let mut tx = conn.begin().await?;
-
-        // TODO - add batch inserts (COPY) if performance lacking
-        for file in self.files.iter() {
-            file.insert(&mut tx).await?;
-        }
-
-        let kernel_source_id = sqlx::query!(
-            r#"
-            INSERT INTO kernel_source (url)
-            VALUES ($1)
-            RETURNING id
-            "#,
-            self.url
-        )
-        .fetch_one(&mut *tx)
-        .await?
-        .id;
-
-        tx.commit().await?;
-
-        Ok(kernel_source_id)
-    }
-}
-
-#[derive(FromRow, Type)]
+#[derive(Debug)]
 pub struct KernelSourceRow {
     pub id: i32,
     pub kernel_release_id: i32,
@@ -53,5 +21,6 @@ impl KernelSourceRow {
         )
         .fetch_one(conn)
         .await
+        .map_err(DatabaseBridgeError::from)
     }
 }
