@@ -1,5 +1,5 @@
 use crate::error::{DatabaseBridgeError, Result};
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct KernelReleaseFileRow {
@@ -9,7 +9,7 @@ pub struct KernelReleaseFileRow {
 }
 
 impl KernelReleaseFileRow {
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelReleaseFileRow,
             r#"
@@ -19,14 +19,14 @@ impl KernelReleaseFileRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
     pub async fn fetch_all_by_kernel_release_id(
         kernel_release_id: i32,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Vec<Self>> {
         sqlx::query_as!(
             KernelReleaseFileRow,
@@ -37,14 +37,14 @@ impl KernelReleaseFileRow {
             "#,
             kernel_release_id
         )
-        .fetch_all(conn)
+        .fetch_all(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
     pub async fn fetch_all_by_kernel_file_id(
         kernel_file_id: i32,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Vec<Self>> {
         sqlx::query_as!(
             KernelReleaseFileRow,
@@ -55,7 +55,7 @@ impl KernelReleaseFileRow {
             "#,
             kernel_file_id
         )
-        .fetch_all(conn)
+        .fetch_all(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }

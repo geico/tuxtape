@@ -5,7 +5,7 @@ use proto::tuxtape::{
     common::v1::{Cve, MainlineKernelRelease, Vulnerability, VulnerabilityInstance},
     server::database::v1::get_vulnerabilities_request::GetBy,
 };
-use sqlx::{PgConnection, PgPool};
+use sqlx::{Acquire, PgPool, PgTransaction};
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -110,12 +110,12 @@ impl TestData {
 
     async fn insert_vulnerabilities(
         &self,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Vec<VulnerabilityRow>> {
         let vulnerability_row_1 =
-            VulnerabilityRow::insert_or_fetch(&self.vulnerability_1, conn).await?;
+            VulnerabilityRow::insert_or_fetch(&self.vulnerability_1, tx).await?;
         let vulnerability_row_2 =
-            VulnerabilityRow::insert_or_fetch(&self.vulnerability_2, conn).await?;
+            VulnerabilityRow::insert_or_fetch(&self.vulnerability_2, tx).await?;
 
         Ok(vec![vulnerability_row_1, vulnerability_row_2])
     }
@@ -126,15 +126,19 @@ async fn test_get_all_vulnerabilities(pool: PgPool) -> Result<()> {
     // Acquire a connection from the pool.
     let mut conn = pool.acquire().await?;
 
+    let mut tx = conn.begin().await?;
+
     let test_data = TestData::new();
-    let _ = test_data.insert_vulnerabilities(&mut conn).await?;
+    let _ = test_data.insert_vulnerabilities(&mut tx).await?;
 
     let request = GetVulnerabilitiesRequest {
         excludes: vec![],
         get_by: Some(GetBy::All(Default::default())),
     };
 
-    let response = grpc::service::get_vulnerabilities(&mut conn, &request).await?;
+    let response = grpc::service::get_vulnerabilities(&mut tx, &request).await?;
+
+    tx.commit().await?;
 
     assert_eq!(
         [test_data.vulnerability_1, test_data.vulnerability_2].as_slice(),

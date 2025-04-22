@@ -1,6 +1,6 @@
 use crate::error::{DatabaseBridgeError, Result};
 use proto::tuxtape::common::v1::MainlineKernelRelease as MainlineKernelReleaseProto;
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct MainlineKernelReleaseRow {
@@ -14,7 +14,7 @@ pub struct MainlineKernelReleaseRow {
 impl MainlineKernelReleaseRow {
     pub async fn insert_or_fetch(
         proto: &MainlineKernelReleaseProto,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Self> {
         sqlx::query_as!(
             MainlineKernelReleaseRow,
@@ -30,12 +30,12 @@ impl MainlineKernelReleaseRow {
             proto.patch_version as i32,
             proto.extra_version
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             MainlineKernelReleaseRow,
             r#"
@@ -45,14 +45,14 @@ impl MainlineKernelReleaseRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
     pub async fn fetch_from_proto(
         proto: &MainlineKernelReleaseProto,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Self> {
         sqlx::query_as!(
             MainlineKernelReleaseRow,
@@ -69,7 +69,7 @@ impl MainlineKernelReleaseRow {
             proto.patch_version as i32,
             proto.extra_version
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }

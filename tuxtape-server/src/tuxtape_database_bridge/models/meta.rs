@@ -1,5 +1,5 @@
 use crate::error::{DatabaseBridgeError, Result};
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct MetaRow {
@@ -9,7 +9,7 @@ pub struct MetaRow {
 }
 
 impl MetaRow {
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             MetaRow,
             r#"
@@ -19,7 +19,7 @@ impl MetaRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
@@ -31,7 +31,7 @@ pub struct Meta {
 }
 
 impl Meta {
-    pub async fn insert(&self, conn: &mut PgConnection) -> Result<i32> {
+    pub async fn insert(&self, tx: &mut PgTransaction<'_>) -> Result<i32> {
         let meta_id = sqlx::query!(
             r#"
             INSERT INTO meta (based_on_vulns_commit, last_run_unix_time)
@@ -41,7 +41,7 @@ impl Meta {
             self.based_on_vulns_commit,
             self.last_run_unix_time
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await?
         .id;
 

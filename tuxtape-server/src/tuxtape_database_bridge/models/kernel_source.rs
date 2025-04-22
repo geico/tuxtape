@@ -1,5 +1,5 @@
 use crate::error::{DatabaseBridgeError, Result};
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct KernelSourceRow {
@@ -9,7 +9,7 @@ pub struct KernelSourceRow {
 }
 
 impl KernelSourceRow {
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelSourceRow,
             r#"
@@ -19,7 +19,7 @@ impl KernelSourceRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }

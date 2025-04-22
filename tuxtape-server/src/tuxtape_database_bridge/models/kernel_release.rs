@@ -1,6 +1,6 @@
 use crate::error::{DatabaseBridgeError, Result};
 use proto::tuxtape::common::v1::KernelRelease as KernelReleaseProto;
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 use super::mainline_kernel_release::MainlineKernelReleaseRow;
 
@@ -12,7 +12,7 @@ pub struct KernelReleaseRow {
 }
 
 impl KernelReleaseRow {
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelReleaseRow,
             r#"
@@ -22,12 +22,12 @@ impl KernelReleaseRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_many(ids: &[i32], conn: &mut PgConnection) -> Result<Vec<Self>> {
+    pub async fn fetch_many(ids: &[i32], tx: &mut PgTransaction<'_>) -> Result<Vec<Self>> {
         sqlx::query_as!(
             KernelReleaseRow,
             r#"
@@ -37,14 +37,14 @@ impl KernelReleaseRow {
             "#,
             ids
         )
-        .fetch_all(conn)
+        .fetch_all(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
     pub async fn fetch_affected_by_vulnerability_instance(
         vulnerability_instance_id: i32,
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Vec<Self>> {
         sqlx::query_as!(
             KernelReleaseRow,
@@ -55,14 +55,14 @@ impl KernelReleaseRow {
             "#,
             vulnerability_instance_id
         )
-        .fetch_all(conn)
+        .fetch_all(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
     pub async fn fetch_from_protos(
         protos: &[KernelReleaseProto],
-        conn: &mut PgConnection,
+        tx: &mut PgTransaction<'_>,
     ) -> Result<Vec<Self>> {
         let mut kernel_release_rows = Vec::with_capacity(protos.len());
 
@@ -76,11 +76,9 @@ impl KernelReleaseRow {
                     ));
                 };
 
-            let mainline_kernel_release = MainlineKernelReleaseRow::fetch_from_proto(
-                mainline_kernel_release_proto,
-                &mut *conn,
-            )
-            .await?;
+            let mainline_kernel_release =
+                MainlineKernelReleaseRow::fetch_from_proto(mainline_kernel_release_proto, &mut *tx)
+                    .await?;
 
             let kernel_release_row = sqlx::query_as!(
                 KernelReleaseRow,
@@ -92,7 +90,7 @@ impl KernelReleaseRow {
                 mainline_kernel_release.id,
                 proto.local_version
             )
-            .fetch_one(&mut *conn)
+            .fetch_one(&mut **tx)
             .await?;
 
             kernel_release_rows.push(kernel_release_row);

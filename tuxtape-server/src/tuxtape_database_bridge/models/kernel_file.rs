@@ -1,5 +1,5 @@
 use crate::error::{DatabaseBridgeError, Result};
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct KernelFileRow {
@@ -8,7 +8,7 @@ pub struct KernelFileRow {
 }
 
 impl KernelFileRow {
-    pub async fn insert_or_fetch(file_path: &str, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn insert_or_fetch(file_path: &str, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelFileRow,
             r#"
@@ -20,12 +20,12 @@ impl KernelFileRow {
             "#,
             file_path
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelFileRow,
             r#"
@@ -35,12 +35,12 @@ impl KernelFileRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_many(ids: &[i32], conn: &mut PgConnection) -> Result<Vec<Self>> {
+    pub async fn fetch_many(ids: &[i32], tx: &mut PgTransaction<'_>) -> Result<Vec<Self>> {
         sqlx::query_as!(
             KernelFileRow,
             r#"
@@ -50,12 +50,12 @@ impl KernelFileRow {
             "#,
             ids
         )
-        .fetch_all(conn)
+        .fetch_all(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_by_file_path(file_path: &str, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_by_file_path(file_path: &str, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             KernelFileRow,
             r#"
@@ -65,7 +65,7 @@ impl KernelFileRow {
             "#,
             file_path
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }

@@ -1,6 +1,6 @@
 use crate::error::{DatabaseBridgeError, Result};
 use proto::tuxtape::common::v1::Cve as CveProto;
-use sqlx::PgConnection;
+use sqlx::PgTransaction;
 
 #[derive(Debug)]
 pub struct CveRow {
@@ -19,7 +19,7 @@ pub struct CveRow {
 }
 
 impl CveRow {
-    pub async fn insert_or_fetch(proto: &CveProto, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn insert_or_fetch(proto: &CveProto, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             CveRow,
             r#"
@@ -41,12 +41,12 @@ impl CveRow {
             proto.availability_impact,
             proto.description
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
 
-    pub async fn fetch_one(id: i32, conn: &mut PgConnection) -> Result<Self> {
+    pub async fn fetch_one(id: i32, tx: &mut PgTransaction<'_>) -> Result<Self> {
         sqlx::query_as!(
             CveRow,
             r#"
@@ -54,7 +54,7 @@ impl CveRow {
             "#,
             id
         )
-        .fetch_one(conn)
+        .fetch_one(&mut **tx)
         .await
         .map_err(DatabaseBridgeError::from)
     }
