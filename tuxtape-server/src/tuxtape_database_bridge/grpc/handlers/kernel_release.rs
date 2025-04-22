@@ -1,10 +1,6 @@
 use crate::{
     error::Result,
-    models::{
-        kernel_file::KernelFileRow, kernel_release::KernelReleaseRow,
-        mainline_kernel_release::MainlineKernelReleaseRow,
-        vulnerability_instance_affected_file::VulnerabilityInstanceAffectedFileRow,
-    },
+    models::{kernel_release::KernelReleaseRow, mainline_kernel_release::MainlineKernelReleaseRow},
 };
 use proto::tuxtape::common::v1::KernelRelease;
 use sqlx::PgConnection;
