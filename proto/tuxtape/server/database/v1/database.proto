@@ -44,7 +44,7 @@ message GetVulnerabilitiesRequest {
 
   // Get `Vulnerability`s that affect the specified `KernelRelease`s.
   message ByKernelRelease {
-    repeated tuxtape.common.v1.KernelRelease kernel_release = 1;
+    repeated tuxtape.common.v1.KernelRelease kernel_releases = 1;
   }
 }
 

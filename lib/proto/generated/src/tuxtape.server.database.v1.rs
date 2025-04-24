@@ -19,7 +19,7 @@ pub mod get_vulnerabilities_request {
     #[derive(Clone, PartialEq, ::prost::Message)]
     pub struct ByKernelRelease {
         #[prost(message, repeated, tag = "1")]
-        pub kernel_release: ::prost::alloc::vec::Vec<
+        pub kernel_releases: ::prost::alloc::vec::Vec<
             super::super::super::super::common::v1::KernelRelease,
         >,
     }
