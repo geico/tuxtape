@@ -31,6 +31,20 @@ impl DatabaseService for DatabaseServiceState {
         todo!()
     }
 
+    async fn get_affected_kernel_releases(
+        &self,
+        request: Request<GetAffectedKernelReleasesRequest>,
+    ) -> Result<Response<GetAffectedKernelReleasesResponse>, Status> {
+        todo!()
+    }
+
+    async fn get_affected_kernel_files(
+        &self,
+        request: Request<GetAffectedKernelFilesRequest>,
+    ) -> Result<Response<GetAffectedKernelFilesResponse>, Status> {
+        todo!()
+    }
+
     async fn create_kernel(
         &self,
         request: Request<CreateKernelRequest>,
