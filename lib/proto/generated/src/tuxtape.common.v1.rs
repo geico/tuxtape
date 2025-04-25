@@ -146,12 +146,12 @@ pub struct VulnerabilityInstance {
     /// `MainlineKernelRelease`.
     #[prost(message, optional, tag = "2")]
     pub fixed: ::core::option::Option<MainlineKernelRelease>,
-    /// The prefix of the commit hash (first 12 characters) that
-    /// patched the `Vulnerability` in the fixed `MainlineKernelRelease`.
+    /// The commit hash that patched the `Vulnerability` in the fixed
+    /// `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "3")]
-    pub fixed_commit_prefix: ::core::option::Option<::prost::alloc::string::String>,
+    pub fixed_commit: ::core::option::Option<::prost::alloc::string::String>,
     /// All files affected in this instance of the `Vulnerability`.
     /// Will be empty if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
