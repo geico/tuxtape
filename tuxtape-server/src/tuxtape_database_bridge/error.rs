@@ -9,6 +9,9 @@ pub enum DatabaseBridgeError {
 
     #[error("SQLx error: {0}")]
     SqlxError(#[from] sqlx::Error),
+
+    #[error("Deserialization error: {0}")]
+    DeserializationError(#[from] serde_json::Error),
 }
 
 impl DatabaseBridgeError {
@@ -25,8 +28,9 @@ impl From<DatabaseBridgeError> for tonic::Status {
             DatabaseBridgeError::FromProtoError { missing_field } => {
                 tonic::Status::invalid_argument(format!("Missing Protobuf field: {missing_field}"))
             }
-            DatabaseBridgeError::SqlxError(err) => {
-                tonic::Status::internal(format!("SqlxError: {err}"))
+            DatabaseBridgeError::SqlxError(err) => tonic::Status::internal(format!("{err}")),
+            DatabaseBridgeError::DeserializationError(err) => {
+                tonic::Status::internal(format!("{err}"))
             }
         }
     }
