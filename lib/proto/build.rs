@@ -12,6 +12,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let v1_protos = fetch_proto_dirs(&proto_tuxtape_dir, 1, &["common"]);
 
     let mut config = tonic_build::Config::default();
+    config.type_attribute(".", "#[derive(serde::Serialize, serde::Deserialize)]");
     config.out_dir(proto_src_out_dir);
     config.include_file(generated_include_file);
     config.file_descriptor_set_path(proto_file_descriptor_set_path);
