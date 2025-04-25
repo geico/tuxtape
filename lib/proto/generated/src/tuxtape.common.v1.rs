@@ -189,7 +189,7 @@ pub struct KernelPatch {
 pub struct Cve {
     /// The ID of the CVE.
     #[prost(string, tag = "1")]
-    pub id: ::prost::alloc::string::String,
+    pub cve_id: ::prost::alloc::string::String,
     /// Will be null if the CVE has not yet been evaluated by NIST.
     #[prost(float, optional, tag = "2")]
     pub base_score: ::core::option::Option<f32>,
