@@ -5,7 +5,7 @@ description = "The central server for a complete TuxTape environment."
 
 [dependencies]
 clap = { version = "4.5", features = ["derive", "env"] }
-sqlx = { version = "0.8", features = [ "runtime-tokio", "postgres", "any", "derive", "macros", "migrate" ] }
+sqlx = { version = "0.8", features = [ "runtime-tokio", "postgres", "derive", "macros", "migrate" ] }
 tokio = { version = "1.44", features = ["full"] }
 color-eyre = "0.6"
 tonic = {version = "0.12", features = ["tls", "gzip"] }
