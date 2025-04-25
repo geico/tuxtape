@@ -169,4 +169,4 @@ BEGIN
             )
     );
 END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+$$ LANGUAGE plpgsql STABLE;
