@@ -3,8 +3,9 @@ package tuxtape.common.v1;
 
 // Describes the source that a kernel is built from.
 message KernelSource {
-  // The release of this kernel.
-  KernelRelease kernel_release = 1;
+  // The database ID of the `KernelRelease` this `KernelSource` describes.
+  // Will be null if the `KernelSource` is not yet in the database.
+  optional int32 kernel_release_id = 1;
   // A URL to a .tar.gz that contains the metadata needed to build this kernel.
   //
   // The .tar.gz must contain the following directories/files in the following
@@ -60,6 +61,9 @@ message KernelSource {
 // `PATCHLEVEL` == `8`, `SUBVERSION` == `0`, `EXTRAVERSION` == `-52`, and
 // `CONFIG_LOCAL_VERSION` == `generic` in the first example.
 message KernelRelease {
+  // The database ID for this `KernelRelease`.
+  // Will be null if the KernelRelease is not yet in the database.
+  optional int32 id = 1;
   // The version of the mainline kernel that the described kernel is based on.
   //
   // IMPORTANT: This should be the base that all patches described in this
@@ -70,33 +74,36 @@ message KernelRelease {
   // Ubuntu kernel was 6.8.12 (this is reflected in the
   // `/proc/version_signature`), the patch set provided by Canonical is based on
   // 6.8.0, so that is what `mainline_kernel_release` should be set to.
-  MainlineKernelRelease mainline_kernel_release = 1;
+  MainlineKernelRelease mainline_kernel_release = 2;
   // The `CONFIG_LOCALVERSION` of the described kernel (see this message's
   // documentation for more details).
   //
   // IMPORTANT: Every kernel on the managed fleet must have a unique
   // `local_version` so that the kernel can be uniquely identified.
-  string local_version = 2;
+  string local_version = 3;
 }
 
 // The release of a mainline kernel.
 // In the case of downstream kernels, this is the mainline kernel which the
 // downstream patches are based on.
 message MainlineKernelRelease {
+  // The database ID for this `MainlineKernelRelease`.
+  // Will be null if the `MainlineKernelRelease` is not yet in the database.
+  optional int32 id = 1;
   // The major version of the kernel.
   // Matches the Makefile's `VERSION` variable.
-  uint32 major_version = 1;
+  uint32 major_version = 2;
   // The minor version of the kernel.
   // Matches the Makefile's `PATCHLEVEL` variable.
-  uint32 minor_version = 2;
+  uint32 minor_version = 3;
   // The patch version of the kernel.
   // Matches the Makefile's `SUBLEVEL` variable.
   // Set this value to `0` if there is no `SUBLEVEL`.
-  uint32 patch_version = 3;
+  uint32 patch_version = 4;
   // Should represent the release candidate version if one exists.
   // Matches the Makefile's `EXTRAVERSION` variable.
   // e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
   // (make sure to include the `-`).
   // Set this value to `""` if there is no `EXTRAVERSION`.
-  string extra_version = 4;
+  string extra_version = 5;
 }

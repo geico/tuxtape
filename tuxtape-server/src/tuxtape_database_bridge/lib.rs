@@ -1,2 +1,5 @@
+pub mod error;
 pub mod grpc;
-mod models;
+mod handlers;
+#[cfg(test)]
+mod tests;

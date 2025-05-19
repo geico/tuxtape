@@ -2,9 +2,10 @@
 /// Describes the source that a kernel is built from.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KernelSource {
-    /// The release of this kernel.
-    #[prost(message, optional, tag = "1")]
-    pub kernel_release: ::core::option::Option<KernelRelease>,
+    /// The database ID of the `KernelRelease` this `KernelSource` describes.
+    /// Will be null if the `KernelSource` is not yet in the database.
+    #[prost(int32, optional, tag = "1")]
+    pub kernel_release_id: ::core::option::Option<i32>,
     /// A URL to a .tar.gz that contains the metadata needed to build this kernel.
     ///
     /// The .tar.gz must contain the following directories/files in the following
@@ -61,6 +62,10 @@ pub struct KernelSource {
 /// `CONFIG_LOCAL_VERSION` == `generic` in the first example.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct KernelRelease {
+    /// The database ID for this `KernelRelease`.
+    /// Will be null if the KernelRelease is not yet in the database.
+    #[prost(int32, optional, tag = "1")]
+    pub id: ::core::option::Option<i32>,
     /// The version of the mainline kernel that the described kernel is based on.
     ///
     /// IMPORTANT: This should be the base that all patches described in this
@@ -71,14 +76,14 @@ pub struct KernelRelease {
     /// Ubuntu kernel was 6.8.12 (this is reflected in the
     /// `/proc/version_signature`), the patch set provided by Canonical is based on
     /// 6.8.0, so that is what `mainline_kernel_release` should be set to.
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag = "2")]
     pub mainline_kernel_release: ::core::option::Option<MainlineKernelRelease>,
     /// The `CONFIG_LOCALVERSION` of the described kernel (see this message's
     /// documentation for more details).
     ///
     /// IMPORTANT: Every kernel on the managed fleet must have a unique
     /// `local_version` so that the kernel can be uniquely identified.
-    #[prost(string, tag = "2")]
+    #[prost(string, tag = "3")]
     pub local_version: ::prost::alloc::string::String,
 }
 /// The release of a mainline kernel.
@@ -86,34 +91,38 @@ pub struct KernelRelease {
 /// downstream patches are based on.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct MainlineKernelRelease {
+    /// The database ID for this `MainlineKernelRelease`.
+    /// Will be null if the `MainlineKernelRelease` is not yet in the database.
+    #[prost(int32, optional, tag = "1")]
+    pub id: ::core::option::Option<i32>,
     /// The major version of the kernel.
     /// Matches the Makefile's `VERSION` variable.
-    #[prost(uint32, tag = "1")]
+    #[prost(uint32, tag = "2")]
     pub major_version: u32,
     /// The minor version of the kernel.
     /// Matches the Makefile's `PATCHLEVEL` variable.
-    #[prost(uint32, tag = "2")]
+    #[prost(uint32, tag = "3")]
     pub minor_version: u32,
     /// The patch version of the kernel.
     /// Matches the Makefile's `SUBLEVEL` variable.
     /// Set this value to `0` if there is no `SUBLEVEL`.
-    #[prost(uint32, tag = "3")]
+    #[prost(uint32, tag = "4")]
     pub patch_version: u32,
     /// Should represent the release candidate version if one exists.
     /// Matches the Makefile's `EXTRAVERSION` variable.
     /// e.g. If the Makefile's `EXTRAVERSION` == `-rc1`, this should be `-rc1`
     /// (make sure to include the `-`).
     /// Set this value to `""` if there is no `EXTRAVERSION`.
-    #[prost(string, tag = "4")]
+    #[prost(string, tag = "5")]
     pub extra_version: ::prost::alloc::string::String,
 }
 /// A particular Vulnerability. Almost always describes a Cve.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Vulnerability {
-    /// Instances of this Vulnerability across different MainlineKernelReleases.
-    /// Will be empty if no instances exist in the managed fleet.
-    #[prost(message, repeated, tag = "1")]
-    pub instances: ::prost::alloc::vec::Vec<VulnerabilityInstance>,
+    /// The database ID of this `Vulnerability`.
+    /// Will be null if the `Vulnerability` has not yet been added to the database.
+    #[prost(int32, optional, tag = "1")]
+    pub id: ::core::option::Option<i32>,
     /// A custom description that can be set for a Vulnerability.
     /// Since a Vulnerability almost always describes a Cve, and since CVEs being
     /// patched are typically evaluated by NIST, this value is most useful when
@@ -138,37 +147,34 @@ pub struct Vulnerability {
 /// for both kernel trains.
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct VulnerabilityInstance {
+    /// The database ID of this `VulnerabilityInstance`.
+    /// Will be null if the `VulnerabilityInstance` has not yet been added to the database.
+    #[prost(int32, optional, tag = "1")]
+    pub id: ::core::option::Option<i32>,
+    /// The database ID of the `Vulnerability` that this `VulnerabilityInstance`
+    /// describes.
+    #[prost(int32, tag = "2")]
+    pub vulnerability_id: i32,
     /// The `MainlineKernelRelease` in which the Vulnerability was introduced.
-    #[prost(message, optional, tag = "1")]
+    #[prost(message, optional, tag = "3")]
     pub introduced: ::core::option::Option<MainlineKernelRelease>,
     /// The `MainlineKernelRelease` that patched the `Vulnerability`.
     /// Will be null if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
-    #[prost(message, optional, tag = "2")]
+    #[prost(message, optional, tag = "4")]
     pub fixed: ::core::option::Option<MainlineKernelRelease>,
-    /// The prefix of the commit hash (first 12 characters) that
-    /// patched the `Vulnerability` in the fixed `MainlineKernelRelease`.
+    /// The commit hash that patched the `Vulnerability` in the fixed
+    /// `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
-    #[prost(string, optional, tag = "3")]
-    pub fixed_commit_prefix: ::core::option::Option<::prost::alloc::string::String>,
-    /// All files affected in this instance of the `Vulnerability`.
-    /// Will be empty if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelRelease`.
-    #[prost(string, repeated, tag = "4")]
-    pub affected_files: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
-    /// Metadata on all kernels affected by this `Vulnerability`.
-    /// Will be empty if the `Vulnerability` was not patched in a later
-    /// `MainlineKernelRelease` or if no kernel build on the fleet is affected by
-    /// this `Vulnerability`.
-    #[prost(message, repeated, tag = "5")]
-    pub affected_kernels: ::prost::alloc::vec::Vec<KernelSource>,
+    #[prost(string, optional, tag = "5")]
+    pub fixed_commit: ::core::option::Option<::prost::alloc::string::String>,
     /// The raw git diff of the commit that patched the `Vulnerability` in the
     /// fixed `MainlineKernelRelease`.
     /// Will be null if the `Vulnerability` was not patched in a later
     /// `MainlineKernelRelease`.
     #[prost(string, optional, tag = "6")]
-    pub raw_patch: ::core::option::Option<::prost::alloc::string::String>,
+    pub patch_diff: ::core::option::Option<::prost::alloc::string::String>,
 }
 /// Describes a patch module for a particular `KernelRelease`.
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -180,37 +186,41 @@ pub struct KernelPatch {
 /// A CVE described by a particular `Vulnerability.`
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Cve {
+    /// The database ID of this `Cve`.
+    /// Will be null if the `Cve` has not yet been added to the database.
+    #[prost(int32, optional, tag = "1")]
+    pub id: ::core::option::Option<i32>,
     /// The ID of the CVE.
-    #[prost(string, tag = "1")]
-    pub id: ::prost::alloc::string::String,
+    #[prost(string, tag = "2")]
+    pub cve_id: ::prost::alloc::string::String,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(float, optional, tag = "2")]
+    #[prost(float, optional, tag = "3")]
     pub base_score: ::core::option::Option<f32>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "3")]
+    #[prost(string, optional, tag = "4")]
     pub attack_vector: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "4")]
+    #[prost(string, optional, tag = "5")]
     pub attack_complexity: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "5")]
+    #[prost(string, optional, tag = "6")]
     pub privileges_required: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "6")]
+    #[prost(string, optional, tag = "7")]
     pub user_interaction: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "7")]
+    #[prost(string, optional, tag = "8")]
     pub scope: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "8")]
+    #[prost(string, optional, tag = "9")]
     pub confidentiality_impact: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "9")]
+    #[prost(string, optional, tag = "10")]
     pub integrity_impact: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "10")]
+    #[prost(string, optional, tag = "11")]
     pub availability_impact: ::core::option::Option<::prost::alloc::string::String>,
     /// Will be null if the CVE has not yet been evaluated by NIST.
-    #[prost(string, optional, tag = "11")]
+    #[prost(string, optional, tag = "12")]
     pub description: ::core::option::Option<::prost::alloc::string::String>,
 }

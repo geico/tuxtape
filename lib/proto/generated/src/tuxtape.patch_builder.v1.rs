@@ -6,8 +6,8 @@ pub struct BuildPatchRequest {
     #[prost(message, optional, tag = "1")]
     pub kernel_source: ::core::option::Option<super::super::common::v1::KernelSource>,
     /// The patch itself.
-    #[prost(bytes = "vec", tag = "2")]
-    pub patch: ::prost::alloc::vec::Vec<u8>,
+    #[prost(string, tag = "2")]
+    pub patch_diff: ::prost::alloc::string::String,
 }
 /// The response to a `BuildPatchRequest`.
 #[derive(Clone, PartialEq, ::prost::Message)]

@@ -3,12 +3,11 @@
 This library serves as the "bridge" to the SQL database backend used for
 `tuxtape-server`.
 
-# Models
+# grpc
 
-Models which represent the data stored in the database are defined in `models/`.
+The `grpc` module contains all handlers for database-related gRPC requests. 
 
-# gRPC
+# handlers
 
-All handlers for database-related gRPC requests are located within the `grpc`
-module. These handlers take in `T` for `tonic` `Request<T>` types (the inner
-message) and return a `T` for `tonic` `Response<T>` types.
+The `handlers` module handles data insertion and reads to/from the database
+based on the inner messages within the requests handled by the `grpc` module.
